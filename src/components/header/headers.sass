@@ -1,0 +1,78 @@
+@use '../../styles/_variables' as vars
+
+.header
+    display: flex
+    justify-content: space-between
+    align-items: center
+
+    background-color: vars.$background-color--header
+
+    color: vars.$background-color--body
+
+    padding: vars.$padding-main
+
+.header__logo
+    display: flex
+    align-items: center
+    gap: 15px
+
+.header__title-accent--rick
+    color: #90d0f0
+.header__title-accent--morty
+    color: #f8e838
+.header__title-accent--and
+    color: vars.$portal-color
+
+.header__logo-image
+    max-width: 50px
+
+.header__navigation
+    display: flex
+    gap: 15px
+
+.header__link
+    display: flex
+    align-items: center
+    gap: 8px
+    font-size: 1.3em
+    font-weight: 300
+    transition: .3s color
+    &::before
+        content: ""
+        display: inline-block
+        width: 20px
+        height: 20px
+        background-color: vars.$background-color--body
+        transition: .3s background-color
+    &:hover
+        color: vars.$portal-color
+    &:hover::before
+        background-color: vars.$portal-color
+.header__link--home
+    &::before
+        mask: url("../../assets/icons/home.svg") center / contain no-repeat
+        -webkit-mask: url("../../assets/icons/home.svg") center / contain no-repeat
+.header__link--about
+    &::before
+        mask: url("../../assets/icons/info.svg") center / contain no-repeat
+        -webkit-mask: url("../../assets/icons/info.svg") center / contain no-repeat
+
+// Медиа - запросы
+@media (max-width: vars.$breakpoint-laptop)
+    .header__navigation
+        font-size: .9em
+        gap: 10px
+
+@media (max-width: vars.$breakpoint-tablet)
+    .header__navigation
+        font-size: .8em
+        gap: 8px
+    .header__title
+        font-size: 1.5em
+
+@media (max-width: vars.$breakpoint-mobile)
+    .header__navigation
+        font-size: .7em
+        gap: 6px
+    .header__title
+        display: none
