@@ -1,0 +1,35 @@
+@use '../../styles/_variables' as vars
+
+.search__form
+    display: flex
+    align-items: center
+
+    gap: 15px
+// ----------------------------------------------------------------------
+
+.search__input-wrapper
+    position: relative
+    &::before
+        content: ""
+        position: absolute
+        left: 12px
+        top: 50%
+        transform: translateY(-50%)
+        width: 20px
+        height: 20px
+        background-color: vars.$font-color
+        opacity: .5
+        mask: url("../../assets/icons/search.svg") center / contain no-repeat
+        -webkit-mask: url("../../assets/icons/search.svg") center / contain no-repeat
+.search__input
+    width: 40vw
+    padding: 10px 5px 10px 40px
+    border: 1px rgba(vars.$font-color, .5) solid
+    border-radius: 5px
+    &::placeholder
+        color: inherit
+        opacity: .5
+        font: inherit
+
+.search__button
+    @include vars.button

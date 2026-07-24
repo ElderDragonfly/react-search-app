@@ -3,6 +3,12 @@ $background-color--header: #1f2937
 $background-color--body: #f7f3ea
 $portal-color: #7bb94d
 
+$font-color: #1f2937
+
+$button-color: #7bb94d
+$button-hover-color: #659c3f
+$button-text-color: #ffffff
+
 // отступы
 $padding-main: 20px
 
@@ -11,3 +17,14 @@ $breakpoint-mobile: 480px
 $breakpoint-tablet: 768px
 $breakpoint-laptop: 1024px
 $breakpoint-desktop: 1280px
+
+// Миксины
+
+@mixin button
+    border: 1px rgba($font-color, .5) solid
+    border-radius: 5px
+    padding: 10px 15px
+    background-color: $button-color
+    transition: background-color .3s
+    &:hover
+        background-color: $button-hover-color
