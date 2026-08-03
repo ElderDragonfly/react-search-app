@@ -1,4 +1,4 @@
-export type CharacterCard = {
+export type Character = {
   id: number;
   name: string;
   status: string;
@@ -19,6 +19,9 @@ export type CharacterCard = {
   created: string;
 };
 
-export type CharactersCardsList = {
-  CharactersCards: CharacterCard[];
+export type CharactersListProps = {
+  characters: Character[];
 };
+
+// Типы для выбора где искать персонаж/локация/эпизод
+export type SearchType = "character" | "location" | "episode";

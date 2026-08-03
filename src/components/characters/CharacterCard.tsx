@@ -1,7 +1,7 @@
 import { Component, type ReactNode } from "react";
-import type { CharacterCard as CharacterCardProps } from "./charactersType";
+import type { Character } from "./types";
 
-class CharacterCard extends Component<CharacterCardProps> {
+class CharacterCard extends Component<Character> {
   render(): ReactNode {
     return (
       <li>

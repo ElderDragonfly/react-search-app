@@ -7,7 +7,8 @@
     "dev": "vite --host 127.0.0.1 --port 5173",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "zip": "node -e \"require('node:fs').rmSync('../react-search-app.zip', { force: true })\" && tar -a --exclude=node_modules --exclude=.git --exclude=dist -cf ../react-search-app.zip ."
   },
   "dependencies": {
     "react": "^19.2.7",

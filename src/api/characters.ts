@@ -1,9 +1,9 @@
 import apiClient from "./apiClient";
 
-async function requestCharacter(request: string) {
+async function fetchCharacters(query: string) {
   try {
     const response = await apiClient(
-      `/character?name=${encodeURIComponent(request)}`,
+      `/character?name=${encodeURIComponent(query)}`,
     );
     return response;
   } catch (error) {
@@ -11,4 +11,4 @@ async function requestCharacter(request: string) {
   }
 }
 
-export default requestCharacter;
+export default fetchCharacters;

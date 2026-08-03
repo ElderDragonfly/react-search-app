@@ -1,23 +1,30 @@
 import { Component, type ReactNode } from "react";
 import Header from "./components/header/Header";
-import SearchInput from "./components/search/Search";
-import requestCharacter from "./api/characters";
+import SearchForm from "./components/search-form/SearchForm";
+import fetchCharacters from "./api/characters";
 import CharactersList from "./components/characters/CharactersList";
-import type { CharacterCard as CharacterData } from "./components/characters/charactersType";
+import type {
+  Character as CharacterData,
+  SearchType,
+} from "./components/characters/types";
 
 type AppState = {
-  results: CharacterData[];
+  characters: CharacterData[];
+  searchType: SearchType;
 };
 
 export class App extends Component<object, AppState> {
   // Создаём поле state
-  state: Readonly<AppState> = {
-    results: [],
+  state: AppState = {
+    characters: [],
+    searchType: "character",
   };
   // Функция-колбек для поиска
-  handleSearch = async (searchValue: string) => {
-    const charactersData = await requestCharacter(searchValue);
-    this.setState({ results: charactersData.results });
+  handleSearch = async (searchValue: string, searchType: SearchType) => {
+    if (searchType === "character") {
+      const data = await fetchCharacters(searchValue);
+      this.setState({ characters: data.results });
+    }
   };
 
   render(): ReactNode {
@@ -25,8 +32,8 @@ export class App extends Component<object, AppState> {
       <>
         <Header />
         <main>
-          <SearchInput onSearch={this.handleSearch} />
-          <CharactersList CharactersCards={this.state.results} />
+          <SearchForm onSearch={this.handleSearch} />
+          <CharactersList characters={this.state.characters} />
         </main>
       </>
     );
