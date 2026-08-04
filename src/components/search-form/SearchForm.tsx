@@ -59,37 +59,40 @@ class SearchForm extends Component<SearchProps, SearchState> {
               placeholder={this.state.placeholder}
               onChange={this.handleChange}
             />
+            <button type="submit" className="search__button">
+              Search
+            </button>
           </div>
-          <button type="submit" className="search__button">
-            Search
-          </button>
 
-          <fieldset>
-            <label>
+          <fieldset className="search__type-wrapper">
+            <label className="search__label">
               <input
                 type="radio"
                 name="searchType"
                 value="character"
+                className="search__type"
                 onChange={this.handleTypeChange}
                 checked={this.state.searchType === "character"}
               />
               Characters
             </label>
-            <label>
+            <label className="search__label">
               <input
                 type="radio"
                 name="searchType"
                 value="location"
+                className="search__type"
                 onChange={this.handleTypeChange}
                 checked={this.state.searchType === "location"}
               />
               Locations
             </label>
-            <label>
+            <label className="search__label">
               <input
                 type="radio"
                 name="searchType"
                 value="episode"
+                className="search__type"
                 onChange={this.handleTypeChange}
                 checked={this.state.searchType === "episode"}
               />

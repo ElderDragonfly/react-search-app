@@ -2,30 +2,36 @@
 
 .search__form
     display: flex
+    flex-direction: column
     align-items: center
-
     gap: 15px
+
 // ----------------------------------------------------------------------
 
 .search__input-wrapper
     position: relative
+    width: 40vw
+
     &::before
         content: ""
         position: absolute
-        left: 12px
         top: 50%
-        transform: translateY(-50%)
+        left: 12px
         width: 20px
         height: 20px
         background-color: vars.$font-color
         opacity: .5
+        transform: translateY(-50%)
         mask: url("../../assets/icons/search.svg") center / contain no-repeat
         -webkit-mask: url("../../assets/icons/search.svg") center / contain no-repeat
+        pointer-events: none
+
 .search__input
-    width: 40vw
+    width: 100%
     padding: 10px 5px 10px 40px
-    border: 1px rgba(vars.$font-color, .5) solid
+    border: 1px solid rgba(vars.$font-color, .5)
     border-radius: 5px
+
     &::placeholder
         color: inherit
         opacity: .5
@@ -33,3 +39,49 @@
 
 .search__button
     @include vars.button
+    position: absolute
+    top: 0
+    left: calc(100% + 15px)
+
+// ----------------------------------------------------------------------
+
+.search__type-wrapper
+    display: flex
+    gap: 24px
+    margin: 0
+    padding: 0
+    border: 0
+    border-bottom: 1px solid rgba(vars.$font-color, .2)
+
+.search__label
+    position: relative
+    padding: 4px 2px 9px
+    color: rgba(vars.$font-color, .6)
+    cursor: pointer
+    transition: color .2s
+
+    &::after
+        content: ""
+        position: absolute
+        right: 0
+        bottom: -1px
+        left: 0
+        height: 3px
+        border-radius: 3px 3px 0 0
+        background-color: vars.$portal-color
+        transform: scaleX(0)
+        transition: transform .2s
+
+    &:hover
+        color: vars.$font-color
+
+    &:has(.search__type:checked)
+        color: vars.$font-color
+        font-weight: 600
+
+        &::after
+            transform: scaleX(1)
+
+.search__type
+    position: absolute
+    opacity: 0
