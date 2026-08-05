@@ -1,3 +1,10 @@
+export type CharactersInfo = {
+  count: number;
+  pages: number;
+  next: string | null;
+  prev: string | null;
+};
+
 export type Character = {
   id: number;
   name: string;
@@ -20,6 +27,7 @@ export type Character = {
 };
 
 export type CharactersListProps = {
+  charactersInfo: CharactersInfo;
   characters: Character[];
 };
 

@@ -4,7 +4,7 @@ import {
   type ChangeEvent,
   type SubmitEvent,
 } from "react";
-import type { SearchType } from "../characters/types";
+import type { SearchType } from "../types/types";
 
 type SearchProps = {
   onSearch: (searchValue: string, searchType: SearchType) => void;
@@ -12,14 +12,13 @@ type SearchProps = {
 
 type SearchState = {
   query: string;
-  placeholder: string;
   searchType: SearchType;
 };
 
 class SearchForm extends Component<SearchProps, SearchState> {
+  // Задаём начальные значения state
   state: SearchState = {
     query: "",
-    placeholder: "Search characters...",
     searchType: "character",
   };
 
@@ -56,7 +55,8 @@ class SearchForm extends Component<SearchProps, SearchState> {
             <input
               type="search"
               className="search__input"
-              placeholder={this.state.placeholder}
+              // Placeholder меняется вместе с изменением state
+              placeholder={`Search ${this.state.searchType}...`}
               onChange={this.handleChange}
             />
             <button type="submit" className="search__button">
