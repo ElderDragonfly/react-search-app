@@ -29,6 +29,8 @@ export type Character = {
 export type CharactersListProps = {
   charactersInfo: CharactersInfo;
   characters: Character[];
+  currentPage: number;
+  onPaginationChange: (currentPage: number) => void;
 };
 
 // Типы для выбора где искать персонаж/локация/эпизод
