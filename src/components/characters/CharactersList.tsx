@@ -35,7 +35,7 @@ class CharactersList extends Component<CharactersListProps> {
                 >
                   1
                 </button>
-                {currentPage - 2 > 2 && <span>...</span>}
+                {currentPage - 2 > 1 && <span>...</span>}
               </>
             )}
           {/* Если есть предыдущая страница отобразит и её */}
@@ -80,23 +80,25 @@ class CharactersList extends Component<CharactersListProps> {
           )}
           {/* Если есть ещё страница отобразит и её */}
           {currentPage + 2 <= pages && (
-            <button
-              className="pagination__button"
-              onClick={() => {
-                this.props.onPaginationChange(currentPage + 2);
-              }}
-            >
-              {this.props.currentPage + 2}
-            </button>
+            <>
+              <button
+                className="pagination__button"
+                onClick={() => {
+                  this.props.onPaginationChange(currentPage + 2);
+                }}
+              >
+                {this.props.currentPage + 2}
+              </button>
+              {currentPage + 2 < pages && <span>...</span>}
+            </>
           )}
-          {/* Если страница не последняя, 
+          {/* Если страница не последняя,
           покажет показвается пагинация на последнюю страницу */}
           {currentPage < pages &&
             currentPage + 1 !== pages &&
             currentPage + 2 !== pages && (
               <>
                 {" "}
-                {currentPage + 2 < pages - 1 && <span>...</span>}
                 <button
                   className="pagination__button"
                   onClick={() => {

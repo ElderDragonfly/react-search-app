@@ -2,11 +2,77 @@
 
 .characters-list
     display: grid
-    grid-template-columns: repeat(4, 1fr)
-    gap: 20px
+    grid-template-columns: repeat(4, minmax(0, 1fr))
+    gap: 24px
+    width: 100%
+    max-width: 1280px
 
 .character-card
-    width: 100%
+    display: flex
+    flex-direction: column
+    min-width: 0
+    height: 100%
+    overflow: hidden
+    background-color: #ffffff
+    border: 1px solid rgba(vars.$font-color, .12)
+    border-radius: 12px
+    box-shadow: 0 4px 12px rgba(vars.$font-color, .08)
+    transition: transform .2s, box-shadow .2s, border-color .2s
+
+    &:hover
+        border-color: rgba(vars.$portal-color, .6)
+        box-shadow: 0 10px 24px rgba(vars.$font-color, .15)
+        transform: translateY(-4px)
+
+    &__image
+        display: block
+        width: 100%
+
+    &__content
+        display: flex
+        flex: 1
+        flex-direction: column
+        gap: 10px
+        padding: 18px
+
+    &__name
+        min-height: 2.6em
+        font-size: 1.2rem
+        line-height: 1.3
+        color: vars.$font-color
+
+    &__status
+        display: flex
+        align-items: center
+        gap: 8px
+        font-weight: 500
+
+        &::before
+            content: ""
+            flex-shrink: 0
+            width: 10px
+            height: 10px
+            border-radius: 50%
+            background-color: #9ca3af
+
+        &--alive::before
+            background-color: vars.$portal-color
+
+        &--dead::before
+            background-color: #d9534f
+
+        &--unknown::before
+            background-color: #9ca3af
+
+    &__detail
+        display: flex
+        justify-content: space-between
+        gap: 10px
+        padding-top: 8px
+        border-top: 1px solid rgba(vars.$font-color, .1)
+
+    &__label
+        color: rgba(vars.$font-color, .6)
 
 .search__results--pagination
     display: flex
@@ -14,7 +80,6 @@
     align-items: center
     gap: 8px
     width: 100%
-    margin-top: 30px
     padding-bottom: 20px
 
 .pagination__button
@@ -49,3 +114,15 @@
 
         &:hover
             background-color: vars.$button-color
+
+@media (max-width: vars.$breakpoint-laptop)
+    .characters-list
+        grid-template-columns: repeat(3, minmax(0, 1fr))
+
+@media (max-width: vars.$breakpoint-tablet)
+    .characters-list
+        grid-template-columns: repeat(2, minmax(0, 1fr))
+
+@media (max-width: vars.$breakpoint-mobile)
+    .characters-list
+        grid-template-columns: 1fr
