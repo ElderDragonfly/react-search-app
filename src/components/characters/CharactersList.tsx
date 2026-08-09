@@ -1,8 +1,30 @@
 import { Component, type ReactNode } from "react";
-import type { CharactersListProps } from "../types/types";
+import type { Character, CharactersListProps } from "../types/types";
 import CharacterCard from "./CharacterCard";
+import CharacterModal from "./modal/CharacterModal";
 
-class CharactersList extends Component<CharactersListProps> {
+type CharacterListState = {
+  selectedCharacter: Character | null;
+};
+
+class CharactersList extends Component<
+  CharactersListProps,
+  CharacterListState
+> {
+  // Изначально никакая карточка не выбрана
+  state: CharacterListState = {
+    selectedCharacter: null,
+  };
+  // Callback для выбора карточки по клину на ней
+  handleSelecteCharacterCard = (character: Character) => {
+    this.setState({ selectedCharacter: character });
+  };
+  // Закрытие модального окна
+  handleModalClose = () => {
+    this.setState({ selectedCharacter: null });
+  };
+
+  // Управление пагинацией
   handlePagination = () => {
     const currentPage: number = this.props.currentPage;
     const pages: number = this.props.charactersInfo.pages;
@@ -35,7 +57,8 @@ class CharactersList extends Component<CharactersListProps> {
                 >
                   1
                 </button>
-                {currentPage - 2 > 1 && <span>...</span>}
+                {/* // Точки при непоказанных страницах пагинации */}
+                {currentPage - 2 > 2 && <span>...</span>}
               </>
             )}
           {/* Если есть предыдущая страница отобразит и её */}
@@ -89,7 +112,8 @@ class CharactersList extends Component<CharactersListProps> {
               >
                 {this.props.currentPage + 2}
               </button>
-              {currentPage + 2 < pages && <span>...</span>}
+              {/* // Точки при непоказанных страницах пагинации */}
+              {currentPage + 2 < pages - 1 && <span>...</span>}
             </>
           )}
           {/* Если страница не последняя,
@@ -131,9 +155,22 @@ class CharactersList extends Component<CharactersListProps> {
   render(): ReactNode {
     return (
       <>
+        {/* // При выборе персонажа создаётся модальное окно */}
+        {this.state.selectedCharacter && (
+          <CharacterModal
+            character={this.state.selectedCharacter}
+            onCloseModal={this.handleModalClose}
+          />
+        )}
         <ul className="search__results--characters characters-list">
           {this.props.characters.map((character) => {
-            return <CharacterCard key={character.id} {...character} />;
+            return (
+              <CharacterCard
+                key={character.id}
+                onSelect={this.handleSelecteCharacterCard}
+                character={character}
+              />
+            );
           })}
         </ul>
         <div className="search__results--pagination">
