@@ -1,5 +1,5 @@
 import { Component, type ReactNode } from "react";
-import type { Character } from "../types/types";
+import type { Character } from "../../types/types";
 
 type CharacterCardProps = {
   character: Character;

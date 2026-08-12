@@ -1,7 +1,7 @@
 import { Component, type ReactNode } from "react";
-import type { Character, CharactersListProps } from "../types/types";
+import type { Character, CharactersListProps } from "../../types/types";
 import CharacterCard from "./CharacterCard";
-import CharacterModal from "./modal/CharacterModal";
+import CharacterModal from "../modal/CharacterModal";
 
 type CharacterListState = {
   selectedCharacter: Character | null;

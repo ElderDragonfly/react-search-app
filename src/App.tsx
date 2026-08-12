@@ -2,16 +2,24 @@ import { Component, type ReactNode } from "react";
 import Header from "./components/header/Header";
 import SearchForm from "./components/search-form/SearchForm";
 import fetchCharacters from "./api/characters";
-import CharactersList from "./components/characters/CharactersList";
+import fetchLocations from "./api/locations";
+import CharactersList from "./components/search-results/characters/CharactersList";
+import LocationsList from "./components/search-results/locations/LocationsList";
 import type {
+  ResultsInfo,
   CharactersInfo,
   Character as CharacterData,
   SearchType,
+  Location,
 } from "./components/types/types";
 
 type AppState = {
   charactersInfo: CharactersInfo;
   characters: CharacterData[];
+  locations: {
+    locationsInfo: ResultsInfo;
+    locationsData: Location[];
+  };
   searchValue: string;
   searchType: SearchType;
   currentPage: number;
@@ -27,6 +35,15 @@ export class App extends Component<object, AppState> {
       prev: null,
     },
     characters: [],
+    locations: {
+      locationsInfo: {
+        count: 0,
+        pages: 0,
+        next: null,
+        prev: null,
+      },
+      locationsData: [],
+    },
     searchValue: "",
     searchType: "character",
     currentPage: 1,
@@ -45,7 +62,7 @@ export class App extends Component<object, AppState> {
     );
   };
 
-  // Управление запросом с помощбю пагинации
+  // Управление запросом с помощью пагинации
   handlePagination = (currentPage: number) => {
     this.setState(
       { currentPage: currentPage },
@@ -69,6 +86,14 @@ export class App extends Component<object, AppState> {
         charactersInfo: data.info,
         characters: data.results,
       });
+    } else if (this.state.searchType === "location") {
+      const data = await fetchLocations(
+        this.state.searchValue,
+        this.state.currentPage,
+      );
+      this.setState({
+        locations: { locationsInfo: data.info, locationsData: data.results },
+      });
     }
   };
 
@@ -84,6 +109,14 @@ export class App extends Component<object, AppState> {
               characters={this.state.characters}
               currentPage={this.state.currentPage}
               onPaginationChange={this.handlePagination}
+            />
+          )}
+          {this.state.searchType === "location" && (
+            <LocationsList
+              locationsInfo={this.state.locations.locationsInfo}
+              locationsData={this.state.locations.locationsData}
+              currentPage={this.state.currentPage}
+              // onPaginationChange={this.handlePagination}
             />
           )}
         </main>
