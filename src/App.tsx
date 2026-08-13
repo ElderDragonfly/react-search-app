@@ -11,7 +11,10 @@ import type {
   Character as CharacterData,
   SearchType,
   Location,
+  Episode,
 } from "./components/types/types";
+import fetchEpisodes from "./api/episodes";
+import EpisodesList from "./components/search-results/episodes/EpisodesList";
 
 type AppState = {
   charactersInfo: CharactersInfo;
@@ -19,6 +22,10 @@ type AppState = {
   locations: {
     locationsInfo: ResultsInfo;
     locationsData: Location[];
+  };
+  episodes: {
+    episodesInfo: ResultsInfo;
+    episodesData: Episode[];
   };
   searchValue: string;
   searchType: SearchType;
@@ -43,6 +50,15 @@ export class App extends Component<object, AppState> {
         prev: null,
       },
       locationsData: [],
+    },
+    episodes: {
+      episodesInfo: {
+        count: 0,
+        pages: 0,
+        next: null,
+        prev: null,
+      },
+      episodesData: [],
     },
     searchValue: "",
     searchType: "character",
@@ -75,13 +91,12 @@ export class App extends Component<object, AppState> {
   // выбранного типа поиска и номера страницы
   // и запись ответа в state App
   fetchSearchResults = async () => {
-    // В зависимости от типа поиска отсылаем нужный fetch
+    // В зависимости от типа поиска отсылаем нужный fetch и записываем ответ в state App`а
     if (this.state.searchType === "character") {
       const data = await fetchCharacters(
         this.state.searchValue,
         this.state.currentPage,
       );
-      // И записываем ответ в state App`а
       this.setState({
         charactersInfo: data.info,
         characters: data.results,
@@ -93,6 +108,14 @@ export class App extends Component<object, AppState> {
       );
       this.setState({
         locations: { locationsInfo: data.info, locationsData: data.results },
+      });
+    } else if (this.state.searchType === "episode") {
+      const data = await fetchEpisodes(
+        this.state.searchValue,
+        this.state.currentPage,
+      );
+      this.setState({
+        episodes: { episodesInfo: data.info, episodesData: data.results },
       });
     }
   };
@@ -115,6 +138,14 @@ export class App extends Component<object, AppState> {
             <LocationsList
               locationsInfo={this.state.locations.locationsInfo}
               locationsData={this.state.locations.locationsData}
+              currentPage={this.state.currentPage}
+              // onPaginationChange={this.handlePagination}
+            />
+          )}
+          {this.state.searchType === "episode" && (
+            <EpisodesList
+              episodeInfo={this.state.episodes.episodesInfo}
+              episodesData={this.state.episodes.episodesData}
               currentPage={this.state.currentPage}
               // onPaginationChange={this.handlePagination}
             />
