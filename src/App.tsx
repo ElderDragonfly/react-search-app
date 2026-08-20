@@ -17,8 +17,10 @@ import fetchEpisodes from "./api/episodes";
 import EpisodesList from "./components/search-results/episodes/EpisodesList";
 
 type AppState = {
-  charactersInfo: CharactersInfo;
-  characters: CharacterData[];
+  character: {
+    charactersInfo: CharactersInfo;
+    characters: CharacterData[];
+  };
   locations: {
     locationsInfo: ResultsInfo;
     locationsData: Location[];
@@ -35,13 +37,15 @@ type AppState = {
 export class App extends Component<object, AppState> {
   // Создаём поле state
   state: AppState = {
-    charactersInfo: {
-      count: 0,
-      pages: 0,
-      next: "",
-      prev: null,
+    character: {
+      charactersInfo: {
+        count: 0,
+        pages: 0,
+        next: "",
+        prev: null,
+      },
+      characters: [],
     },
-    characters: [],
     locations: {
       locationsInfo: {
         count: 0,
@@ -98,8 +102,10 @@ export class App extends Component<object, AppState> {
         this.state.currentPage,
       );
       this.setState({
-        charactersInfo: data.info,
-        characters: data.results,
+        character: {
+          charactersInfo: data.info,
+          characters: data.results,
+        },
       });
     } else if (this.state.searchType === "location") {
       const data = await fetchLocations(
@@ -128,8 +134,8 @@ export class App extends Component<object, AppState> {
           <SearchForm onSearch={this.handleSearch} />
           {this.state.searchType === "character" && (
             <CharactersList
-              charactersInfo={this.state.charactersInfo}
-              characters={this.state.characters}
+              charactersInfo={this.state.character.charactersInfo}
+              characters={this.state.character.characters}
               currentPage={this.state.currentPage}
               onPaginationChange={this.handlePagination}
             />

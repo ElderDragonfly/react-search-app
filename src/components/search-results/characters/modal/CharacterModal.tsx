@@ -1,12 +1,59 @@
 import { Component, type ReactNode } from "react";
-import type { Character } from "../../../types/types";
+import type { Character, Episode } from "../../../types/types";
+import request from "../../../../api/apiClient";
 
 type CharacterModalProps = {
   character: Character;
   onCloseModal: () => void;
 };
 
-class CharacterModal extends Component<CharacterModalProps> {
+type CharacterModalState = {
+  episode: Episode[];
+};
+
+class CharacterModal extends Component<
+  CharacterModalProps,
+  CharacterModalState
+> {
+  state: Readonly<CharacterModalState> = {
+    episode: [],
+  };
+
+  componentDidMount(): void {
+    this.handleEpisodeLinks(this.props.character);
+  }
+
+  // Обрабатываем ссылки на эпизоды с персонажами из props
+  handleEpisodeLinks = async (character: Character) => {
+    const episodesUrls: string[] = character.episode;
+    const episodesIds: number[] = episodesUrls.map((episodeUrl) => {
+      return Number(episodeUrl.split("/").at(-1));
+    });
+    try {
+      const episodesData = await request(`/episode/${episodesIds}`);
+
+      this.setState({
+        episode: Array.isArray(episodesData) ? episodesData : [episodesData],
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  renderEpisodeLinks = (episodes: Episode[]) => {
+    return (
+      <ul className="character-modal__episodes">
+        {episodes.map((episode) => {
+          return (
+            <li key={episode.id} className="character-modal__episode">
+              <a href="#">{episode.name}</a>
+            </li>
+          );
+        })}
+      </ul>
+    );
+  };
+
   render(): ReactNode {
     return (
       <div className="modal" onClick={this.props.onCloseModal}>
@@ -55,12 +102,10 @@ class CharacterModal extends Component<CharacterModalProps> {
               </span>
             </p>
 
-            <p className="character-modal__detail">
-              <span className="character-modal__episode">
-                Episode:
-                <a href="#">placeholder</a>
-              </span>
-            </p>
+            <div className="character-modal__detail">
+              <span className="character-modal__episode">Episodes:</span>
+              {this.renderEpisodeLinks(this.state.episode)}
+            </div>
           </div>
         </div>
       </div>
