@@ -34,7 +34,7 @@ class EpisodesModal extends Component<EpisodeModalProps> {
             <p className="episode-modal__detail">
               <span className="episode-characters">
                 Characters:
-                <a href="#">placeholder</a>
+                <a>placeholder</a>
               </span>
             </p>
           </div>

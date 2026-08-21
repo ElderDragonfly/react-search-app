@@ -42,6 +42,8 @@ export type CharactersListProps = {
   characters: Character[];
   currentPage: number;
   onPaginationChange: (currentPage: number) => void;
+  onEpisodeSelect: (episode: Episode) => void;
+  onLocationSelect: (locationId: number) => void;
 };
 
 // Типы для локаций

@@ -15,10 +15,10 @@ class Header extends Component {
           </h1>
         </div>
         <nav className="header__navigation">
-          <a className="header__link header__link--home" href="#">
+          <a className="header__link header__link--home">
             Home
           </a>
-          <a className="header__link header__link--about" href="#">
+          <a className="header__link header__link--about">
             About API
           </a>
         </nav>

@@ -5,6 +5,8 @@ import request from "../../../../api/apiClient";
 type CharacterModalProps = {
   character: Character;
   onCloseModal: () => void;
+  onEpisodeSelect: (episode: Episode) => void;
+  onLocationSelect: (locationId: number) => void;
 };
 
 type CharacterModalState = {
@@ -19,6 +21,7 @@ class CharacterModal extends Component<
     episode: [],
   };
 
+  // После первого рендера модального окна загружаем эпизоды персонажа
   componentDidMount(): void {
     this.handleEpisodeLinks(this.props.character);
   }
@@ -40,6 +43,16 @@ class CharacterModal extends Component<
     }
   };
 
+  handleLocationLink = () => {
+    const locationId = Number(
+      this.props.character.location.url.split("/").at(-1),
+    );
+    // Если локация неизвестна, не будет вызываться коллбэк
+    if (locationId === 0) return;
+    // Если локация известна, вызывается коллбэк
+    this.props.onLocationSelect(locationId);
+  };
+
   // Подготавливаем информацию из ссылок на эпизоды для рендера
   renderEpisodeLinks = (episodes: Episode[]) => {
     return (
@@ -53,7 +66,11 @@ class CharacterModal extends Component<
               <span className="character-modal__number">
                 Episode: {Number(episode.episode.match(/(?<=E)\d+/)?.[0])}
               </span>
-              <a className="character-modal__episode-name" href="#">
+              {/* При клике на эпизод вызываем коллбэк запроса App */}
+              <a
+                className="character-modal__episode-name"
+                onClick={() => this.props.onEpisodeSelect(episode)}
+              >
                 {episode.name}
               </a>
             </li>
@@ -107,7 +124,9 @@ class CharacterModal extends Component<
             <p className="character-modal__detail">
               <span className="character-modal__location">
                 Location:
-                <a href="#">{this.props.character.location.name}</a>
+                <a onClick={this.handleLocationLink}>
+                  {this.props.character.location.name}
+                </a>
               </span>
             </p>
 

@@ -160,6 +160,8 @@ class CharactersList extends Component<
           <CharacterModal
             character={this.state.selectedCharacter}
             onCloseModal={this.handleModalClose}
+            onEpisodeSelect={this.props.onEpisodeSelect}
+            onLocationSelect={this.props.onLocationSelect}
           />
         )}
         <ul className="search__results--characters characters-list">

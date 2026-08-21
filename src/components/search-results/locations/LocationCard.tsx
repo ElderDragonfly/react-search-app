@@ -21,7 +21,7 @@ class LocationCard extends Component<LocationCardProps> {
             </p>
 
             <p className="location-card__residents">
-              {<a href="#">first resident</a>}
+              {<a>first resident</a>}
             </p>
           </div>
         </button>

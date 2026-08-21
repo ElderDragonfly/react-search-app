@@ -7,19 +7,19 @@ import {
 import type { SearchType } from "../types/types";
 
 type SearchProps = {
-  onSearch: (searchValue: string, searchType: SearchType) => void;
+  searchType: SearchType;
+  onSearchTypeChange: (searchType: SearchType) => void;
+  onSearch: (searchValue: string) => void;
 };
 
 type SearchState = {
   query: string;
-  searchType: SearchType;
 };
 
 class SearchForm extends Component<SearchProps, SearchState> {
   // Задаём начальные значения state
   state: SearchState = {
     query: "",
-    searchType: "character",
   };
 
   // Метод сохраняет текущее значение поля в state
@@ -32,15 +32,7 @@ class SearchForm extends Component<SearchProps, SearchState> {
   // Метод вызывает переданный колбек с отправкой формы
   handleSubmit = (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
-    this.props.onSearch(this.state.query, this.state.searchType);
-  };
-
-  // Метод записывает в state поле где искать персонаж/локация/эпизод
-  handleTypeChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const selectedType = event.currentTarget.value as SearchType;
-    this.setState({
-      searchType: selectedType,
-    });
+    this.props.onSearch(this.state.query);
   };
 
   render(): ReactNode {
@@ -56,7 +48,7 @@ class SearchForm extends Component<SearchProps, SearchState> {
               type="search"
               className="search__input"
               // Placeholder меняется вместе с изменением state
-              placeholder={`Search ${this.state.searchType}...`}
+              placeholder={`Search ${this.props.searchType}...`}
               onChange={this.handleChange}
             />
             <button type="submit" className="search__button">
@@ -71,8 +63,8 @@ class SearchForm extends Component<SearchProps, SearchState> {
                 name="searchType"
                 value="character"
                 className="search__type"
-                onChange={this.handleTypeChange}
-                checked={this.state.searchType === "character"}
+                onChange={() => this.props.onSearchTypeChange("character")}
+                checked={this.props.searchType === "character"}
               />
               Characters
             </label>
@@ -82,8 +74,8 @@ class SearchForm extends Component<SearchProps, SearchState> {
                 name="searchType"
                 value="location"
                 className="search__type"
-                onChange={this.handleTypeChange}
-                checked={this.state.searchType === "location"}
+                onChange={() => this.props.onSearchTypeChange("location")}
+                checked={this.props.searchType === "location"}
               />
               Locations
             </label>
@@ -93,8 +85,8 @@ class SearchForm extends Component<SearchProps, SearchState> {
                 name="searchType"
                 value="episode"
                 className="search__type"
-                onChange={this.handleTypeChange}
-                checked={this.state.searchType === "episode"}
+                onChange={() => this.props.onSearchTypeChange("episode")}
+                checked={this.props.searchType === "episode"}
               />
               Episodes
             </label>

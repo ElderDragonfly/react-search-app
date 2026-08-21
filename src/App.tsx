@@ -32,6 +32,7 @@ type AppState = {
   searchValue: string;
   searchType: SearchType;
   currentPage: number;
+  error: boolean;
 };
 
 export class App extends Component<object, AppState> {
@@ -67,19 +68,25 @@ export class App extends Component<object, AppState> {
     searchValue: "",
     searchType: "character",
     currentPage: 1,
+    error: false,
   };
   // Функция-колбек для поиска
-  handleSearch = (searchValue: string, searchType: SearchType) => {
+  handleSearch = (searchValue: string) => {
     // Записываем текущее значение value и типа поиска
     this.setState(
       {
         searchValue: searchValue,
-        searchType: searchType,
         currentPage: 1,
       },
       // Вызываем функцию запроса с обновлёнными параметрами
       this.fetchSearchResults,
     );
+  };
+
+  handleSearchType = (searchType: SearchType) => {
+    this.setState({
+      searchType: searchType,
+    });
   };
 
   // Управление запросом с помощью пагинации
@@ -95,35 +102,81 @@ export class App extends Component<object, AppState> {
   // выбранного типа поиска и номера страницы
   // и запись ответа в state App
   fetchSearchResults = async () => {
-    // В зависимости от типа поиска отсылаем нужный fetch и записываем ответ в state App`а
+    // В зависимости от типа поиска отсылаем нужный fetch и пытаемся записать ответ в state App`а,
+    // если приходит ошибка обрабатываем её
     if (this.state.searchType === "character") {
-      const data = await fetchCharacters(
-        this.state.searchValue,
-        this.state.currentPage,
-      );
-      this.setState({
-        character: {
-          charactersInfo: data.info,
-          characters: data.results,
-        },
-      });
+      try {
+        const data = await fetchCharacters(
+          this.state.searchValue,
+          this.state.currentPage,
+        );
+
+        this.setState({
+          character: {
+            charactersInfo: data.info,
+            characters: data.results,
+          },
+          error: false,
+        });
+      } catch (error) {
+        this.setState({
+          error: true,
+        });
+      }
     } else if (this.state.searchType === "location") {
-      const data = await fetchLocations(
-        this.state.searchValue,
-        this.state.currentPage,
-      );
-      this.setState({
-        locations: { locationsInfo: data.info, locationsData: data.results },
-      });
+      try {
+        const data = await fetchLocations(
+          this.state.searchValue,
+          this.state.currentPage,
+        );
+        this.setState({
+          locations: { locationsInfo: data.info, locationsData: data.results },
+          error: false,
+        });
+      } catch (error) {
+        this.setState({
+          error: true,
+        });
+      }
     } else if (this.state.searchType === "episode") {
-      const data = await fetchEpisodes(
-        this.state.searchValue,
-        this.state.currentPage,
-      );
-      this.setState({
-        episodes: { episodesInfo: data.info, episodesData: data.results },
-      });
+      try {
+        const data = await fetchEpisodes(
+          this.state.searchValue,
+          this.state.currentPage,
+        );
+        this.setState({
+          episodes: { episodesInfo: data.info, episodesData: data.results },
+          error: false,
+        });
+      } catch (error) {
+        this.setState({
+          error: true,
+        });
+      }
     }
+  };
+
+  // Колбэк для клика по эпизоду
+  handleEpisodeClick = (episode: Episode) => {
+    this.setState(
+      {
+        searchValue: String(episode.id),
+        searchType: "episode",
+        currentPage: 1,
+      },
+      this.fetchSearchResults,
+    );
+  };
+  // Коллбэк для клика по локации
+  handleLocationClick = (locationId: number) => {
+    this.setState(
+      {
+        searchValue: String(locationId),
+        searchType: "location",
+        currentPage: 1,
+      },
+      this.fetchSearchResults,
+    );
   };
 
   render(): ReactNode {
@@ -131,30 +184,44 @@ export class App extends Component<object, AppState> {
       <>
         <Header />
         <main>
-          <SearchForm onSearch={this.handleSearch} />
-          {this.state.searchType === "character" && (
-            <CharactersList
-              charactersInfo={this.state.character.charactersInfo}
-              characters={this.state.character.characters}
-              currentPage={this.state.currentPage}
-              onPaginationChange={this.handlePagination}
-            />
-          )}
-          {this.state.searchType === "location" && (
-            <LocationsList
-              locationsInfo={this.state.locations.locationsInfo}
-              locationsData={this.state.locations.locationsData}
-              currentPage={this.state.currentPage}
-              // onPaginationChange={this.handlePagination}
-            />
-          )}
-          {this.state.searchType === "episode" && (
-            <EpisodesList
-              episodeInfo={this.state.episodes.episodesInfo}
-              episodesData={this.state.episodes.episodesData}
-              currentPage={this.state.currentPage}
-              // onPaginationChange={this.handlePagination}
-            />
+          <SearchForm
+            searchType={this.state.searchType}
+            onSearchTypeChange={this.handleSearchType}
+            onSearch={this.handleSearch}
+          />
+          {this.state.searchType === "character" &&
+            this.state.error === false && (
+              <CharactersList
+                charactersInfo={this.state.character.charactersInfo}
+                characters={this.state.character.characters}
+                currentPage={this.state.currentPage}
+                onPaginationChange={this.handlePagination}
+                onEpisodeSelect={this.handleEpisodeClick}
+                onLocationSelect={this.handleLocationClick}
+              />
+            )}
+          {this.state.searchType === "location" &&
+            this.state.error === false && (
+              <LocationsList
+                locationsInfo={this.state.locations.locationsInfo}
+                locationsData={this.state.locations.locationsData}
+                currentPage={this.state.currentPage}
+                // onPaginationChange={this.handlePagination}
+              />
+            )}
+          {this.state.searchType === "episode" &&
+            this.state.error === false && (
+              <EpisodesList
+                episodeInfo={this.state.episodes.episodesInfo}
+                episodesData={this.state.episodes.episodesData}
+                currentPage={this.state.currentPage}
+                // onPaginationChange={this.handlePagination}
+              />
+            )}
+          {this.state.error === true && (
+            <>
+              <p className="error__not-found">Sorry, can`t found it :&#40;</p>
+            </>
           )}
         </main>
       </>
