@@ -23,7 +23,7 @@ class CharacterModal extends Component<
     this.handleEpisodeLinks(this.props.character);
   }
 
-  // Обрабатываем ссылки на эпизоды с персонажами из props
+  // Обрабатываем ссылки на эпизоды с персонажами из props и записываем их в state
   handleEpisodeLinks = async (character: Character) => {
     const episodesUrls: string[] = character.episode;
     const episodesIds: number[] = episodesUrls.map((episodeUrl) => {
@@ -40,13 +40,22 @@ class CharacterModal extends Component<
     }
   };
 
+  // Подготавливаем информацию из ссылок на эпизоды для рендера
   renderEpisodeLinks = (episodes: Episode[]) => {
     return (
       <ul className="character-modal__episodes">
         {episodes.map((episode) => {
           return (
-            <li key={episode.id} className="character-modal__episode">
-              <a href="#">{episode.name}</a>
+            <li key={episode.id} className="character-modal__episode-item">
+              <span className="character-modal__season">
+                Season: {Number(episode.episode.match(/(?<=S)\d+/)?.[0])}
+              </span>
+              <span className="character-modal__number">
+                Episode: {Number(episode.episode.match(/(?<=E)\d+/)?.[0])}
+              </span>
+              <a className="character-modal__episode-name" href="#">
+                {episode.name}
+              </a>
             </li>
           );
         })}
@@ -102,8 +111,8 @@ class CharacterModal extends Component<
               </span>
             </p>
 
-            <div className="character-modal__detail">
-              <span className="character-modal__episode">Episodes:</span>
+            <div className="character-modal__detail character-modal__detail--episodes">
+              <span className="character-modal__label">Episodes:</span>
               {this.renderEpisodeLinks(this.state.episode)}
             </div>
           </div>

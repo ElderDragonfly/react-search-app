@@ -25,13 +25,6 @@
     box-shadow: 0 24px 70px rgba(0, 0, 0, .35)
     animation: modal-scale-in .25s ease-out
 
-.character-modal__episodes
-    display: flex
-    flex-wrap: wrap
-    gap: 8px
-    max-height: 180px
-    overflow-y: auto
-
     &__image
         display: block
         width: 100%
@@ -99,11 +92,16 @@
         &:last-child
             border-bottom: 0
 
+        &--episodes
+            flex-direction: column
+            justify-content: flex-start
+            align-items: flex-start
+            gap: 10px
+
     &__label
         color: rgba(vars.$font-color, .6)
 
-    &__location,
-    &__episode
+    &__location
         display: flex
         justify-content: space-between
         align-items: center
@@ -119,6 +117,42 @@
 
             &:hover
                 text-decoration: underline
+
+    &__episodes
+        display: flex
+        flex-direction: column
+        gap: 8px
+        width: 100%
+        max-height: 220px
+        padding-right: 6px
+        overflow-y: auto
+
+    &__episode-item
+        display: grid
+        grid-template-columns: 78px 88px minmax(0, 1fr)
+        align-items: center
+        gap: 10px
+        padding: 10px 12px
+        background-color: rgba(vars.$portal-color, .08)
+        border: 1px solid rgba(vars.$portal-color, .2)
+        border-radius: 8px
+
+    &__season,
+    &__number
+        color: rgba(vars.$font-color, .65)
+        font-size: .8rem
+        font-weight: 500
+
+    &__episode-name
+        overflow: hidden
+        color: vars.$button-hover-color
+        font-weight: 500
+        text-decoration: none
+        text-overflow: ellipsis
+        white-space: nowrap
+
+        &:hover
+            text-decoration: underline
 
     &__close
         position: absolute
@@ -192,11 +226,17 @@
             padding: 24px 18px
 
         &__detail,
-        &__location,
-        &__episode
+        &__location
             align-items: flex-start
             flex-direction: column
             gap: 5px
 
             a
                 text-align: left
+
+        &__episode-item
+            grid-template-columns: 1fr 1fr
+
+        &__episode-name
+            grid-column: 1 / -1
+            white-space: normal
