@@ -1,6 +1,7 @@
 import { Component, type ReactNode } from "react";
 import type { Location, LocationsListProps } from "../../types/types";
 import LocationCard from "./LocationCard";
+import LocationModal from "./modal/LocationModal";
 
 type LocationListState = {
   selectedLocation: Location | null;
@@ -23,13 +24,13 @@ class LocationsList extends Component<LocationsListProps, LocationListState> {
   render(): ReactNode {
     return (
       <>
-        {/* // При выборе персонажа создаётся модальное окно */}
-        {/* {this.state.selectedLocation && (
-          <CharacterModal
-            character={this.state.selectedCharacter}
+        {/* // При выборе локации создаётся модальное окно */}
+        {this.state.selectedLocation && (
+          <LocationModal
+            location={this.state.selectedLocation}
             onCloseModal={this.handleModalClose}
           />
-        )} */}
+        )}
         <ul className="search__results--locations locations-list">
           {this.props.locationsData.map((location) => {
             return (

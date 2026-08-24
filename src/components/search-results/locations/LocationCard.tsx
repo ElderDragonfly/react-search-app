@@ -21,7 +21,7 @@ class LocationCard extends Component<LocationCardProps> {
             </p>
 
             <p className="location-card__residents">
-              {<a>first resident</a>}
+              Residents &#9660;
             </p>
           </div>
         </button>
