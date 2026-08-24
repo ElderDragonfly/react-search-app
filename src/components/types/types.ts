@@ -1,5 +1,7 @@
+import type { ReactNode } from "react";
+
 // Типы для выбора где искать персонаж/локация/эпизод
-export type SearchType = "character" | "location" | "episode";
+export type SearchType = "characters" | "locations" | "episodes";
 
 export type ResultsInfo = {
   count: number;
@@ -9,13 +11,6 @@ export type ResultsInfo = {
 };
 
 // Типы для персонажей
-export type CharactersInfo = {
-  count: number;
-  pages: number;
-  next: string | null;
-  prev: string | null;
-};
-
 export type Character = {
   id: number;
   name: string;
@@ -38,10 +33,10 @@ export type Character = {
 };
 
 export type CharactersListProps = {
-  charactersInfo: CharactersInfo;
+  charactersInfo: ResultsInfo;
   characters: Character[];
   currentPage: number;
-  onPaginationChange: (currentPage: number) => void;
+  renderPagination: () => ReactNode;
   onEpisodeSelect: (episode: Episode) => void;
   onLocationSelect: (locationId: number) => void;
 };

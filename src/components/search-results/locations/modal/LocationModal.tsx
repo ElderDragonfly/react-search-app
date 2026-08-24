@@ -1,6 +1,5 @@
 import { Component, type ReactNode } from "react";
-import type { Character, Location } from "../../../types/types";
-import request from "../../../../api/apiClient";
+import type { Location } from "../../../types/types";
 
 type LocationModalProps = {
   location: Location;

@@ -7,7 +7,6 @@ import CharactersList from "./components/search-results/characters/CharactersLis
 import LocationsList from "./components/search-results/locations/LocationsList";
 import type {
   ResultsInfo,
-  CharactersInfo,
   Character as CharacterData,
   SearchType,
   Location,
@@ -17,17 +16,17 @@ import fetchEpisodes from "./api/episodes";
 import EpisodesList from "./components/search-results/episodes/EpisodesList";
 
 type AppState = {
-  character: {
-    charactersInfo: CharactersInfo;
-    characters: CharacterData[];
+  characters: {
+    info: ResultsInfo;
+    data: CharacterData[];
   };
   locations: {
-    locationsInfo: ResultsInfo;
-    locationsData: Location[];
+    info: ResultsInfo;
+    data: Location[];
   };
   episodes: {
-    episodesInfo: ResultsInfo;
-    episodesData: Episode[];
+    info: ResultsInfo;
+    data: Episode[];
   };
   searchValue: string;
   searchType: SearchType;
@@ -38,35 +37,35 @@ type AppState = {
 export class App extends Component<object, AppState> {
   // Создаём поле state
   state: AppState = {
-    character: {
-      charactersInfo: {
+    characters: {
+      info: {
         count: 0,
         pages: 0,
         next: "",
         prev: null,
       },
-      characters: [],
+      data: [],
     },
     locations: {
-      locationsInfo: {
+      info: {
         count: 0,
         pages: 0,
         next: null,
         prev: null,
       },
-      locationsData: [],
+      data: [],
     },
     episodes: {
-      episodesInfo: {
+      info: {
         count: 0,
         pages: 0,
         next: null,
         prev: null,
       },
-      episodesData: [],
+      data: [],
     },
     searchValue: "",
-    searchType: "character",
+    searchType: "characters",
     currentPage: 1,
     error: false,
   };
@@ -86,15 +85,144 @@ export class App extends Component<object, AppState> {
   handleSearchType = (searchType: SearchType) => {
     this.setState({
       searchType: searchType,
+      currentPage: 1,
     });
   };
 
-  // Управление запросом с помощью пагинации
-  handlePagination = (currentPage: number) => {
+  // Управление пагинацией
+  handlePagination = (newPage: number) => {
     this.setState(
-      { currentPage: currentPage },
+      { currentPage: newPage },
       // Вызываем функцию запроса с обновлёнными параметрами
       this.fetchSearchResults,
+    );
+  };
+  // Рендер пагинации
+  renderPagination = (): ReactNode => {
+    // Тип "characters" | "locations" | "episodes" в разделе связанным с которым будет происходить взаимодействие со state
+    const type = this.state.searchType;
+
+    const currentPage: number = this.state.currentPage;
+    const pages: number = this.state[type].info.pages;
+    return (
+      this.state[type].info.pages > 1 && (
+        <>
+          {/* Стрелка для пролистывания пагинации к началу */}
+          <button
+            className="pagination__button"
+            disabled={currentPage === 1}
+            onClick={() => {
+              if (currentPage - 1 >= 1) {
+                this.handlePagination(this.state.currentPage - 1);
+              }
+            }}
+          >
+            &lt;
+          </button>
+          {/* Если страница не первая, покажет показвается пагинация на 1ю страницу */}
+          {currentPage > 1 &&
+            currentPage - 1 !== 1 &&
+            currentPage - 2 !== 1 && (
+              <>
+                {" "}
+                <button
+                  className="pagination__button"
+                  onClick={() => {
+                    this.handlePagination(1);
+                  }}
+                >
+                  1
+                </button>
+                {/* // Точки при непоказанных страницах пагинации */}
+                {currentPage - 2 > 2 && <span>...</span>}
+              </>
+            )}
+          {/* Если есть предыдущая страница отобразит и её */}
+          {currentPage - 2 >= 1 && (
+            <button
+              className="pagination__button"
+              onClick={() => {
+                this.handlePagination(currentPage - 2);
+              }}
+            >
+              {this.state.currentPage - 2}
+            </button>
+          )}
+          {/* Если есть ещё предыдущая страница отобразит и её */}
+          {currentPage - 1 >= 1 && (
+            <button
+              className="pagination__button"
+              onClick={() => {
+                this.handlePagination(currentPage - 1);
+              }}
+            >
+              {this.state.currentPage - 1}
+            </button>
+          )}
+          {/* Если есть персонажи, отображает номер текущей страницы */}
+          <button
+            className="pagination__button pagination__button--active"
+            disabled
+          >
+            {this.state.currentPage}
+          </button>
+          {/* Если есть следующая страница отобразит и её */}
+          {currentPage + 1 <= pages && (
+            <button
+              className="pagination__button"
+              onClick={() => {
+                this.handlePagination(currentPage + 1);
+              }}
+            >
+              {this.state.currentPage + 1}
+            </button>
+          )}
+          {/* Если есть ещё страница отобразит и её */}
+          {currentPage + 2 <= pages && (
+            <>
+              <button
+                className="pagination__button"
+                onClick={() => {
+                  this.handlePagination(currentPage + 2);
+                }}
+              >
+                {this.state.currentPage + 2}
+              </button>
+              {/* // Точки при непоказанных страницах пагинации */}
+              {currentPage + 2 < pages - 1 && <span>...</span>}
+            </>
+          )}
+          {/* Если страница не последняя,
+          покажет показвается пагинация на последнюю страницу */}
+          {currentPage < pages &&
+            currentPage + 1 !== pages &&
+            currentPage + 2 !== pages && (
+              <>
+                {" "}
+                <button
+                  className="pagination__button"
+                  onClick={() => {
+                    this.handlePagination(this.state[type].info.pages);
+                  }}
+                >
+                  {this.state[type].info.pages}
+                </button>
+              </>
+            )}
+          {/* Стрелка для пролистывания пагинации к концу */}
+          <button
+            className={"pagination__button"}
+            disabled={currentPage === pages}
+            onClick={() => {
+              if (currentPage + 1 <= pages) {
+                this.handlePagination(this.state.currentPage + 1);
+              }
+            }}
+          >
+            &gt;
+          </button>
+        </>
+      )
     );
   };
 
@@ -104,7 +232,7 @@ export class App extends Component<object, AppState> {
   fetchSearchResults = async () => {
     // В зависимости от типа поиска отсылаем нужный fetch и пытаемся записать ответ в state App`а,
     // если приходит ошибка обрабатываем её
-    if (this.state.searchType === "character") {
+    if (this.state.searchType === "characters") {
       try {
         const data = await fetchCharacters(
           this.state.searchValue,
@@ -112,9 +240,9 @@ export class App extends Component<object, AppState> {
         );
 
         this.setState({
-          character: {
-            charactersInfo: data.info,
-            characters: data.results,
+          characters: {
+            info: data.info,
+            data: data.results,
           },
           error: false,
         });
@@ -123,14 +251,14 @@ export class App extends Component<object, AppState> {
           error: true,
         });
       }
-    } else if (this.state.searchType === "location") {
+    } else if (this.state.searchType === "locations") {
       try {
         const data = await fetchLocations(
           this.state.searchValue,
           this.state.currentPage,
         );
         this.setState({
-          locations: { locationsInfo: data.info, locationsData: data.results },
+          locations: { info: data.info, data: data.results },
           error: false,
         });
       } catch (error) {
@@ -138,14 +266,14 @@ export class App extends Component<object, AppState> {
           error: true,
         });
       }
-    } else if (this.state.searchType === "episode") {
+    } else if (this.state.searchType === "episodes") {
       try {
         const data = await fetchEpisodes(
           this.state.searchValue,
           this.state.currentPage,
         );
         this.setState({
-          episodes: { episodesInfo: data.info, episodesData: data.results },
+          episodes: { info: data.info, data: data.results },
           error: false,
         });
       } catch (error) {
@@ -161,7 +289,7 @@ export class App extends Component<object, AppState> {
     this.setState(
       {
         searchValue: String(episode.id),
-        searchType: "episode",
+        searchType: "episodes",
         currentPage: 1,
       },
       this.fetchSearchResults,
@@ -172,7 +300,7 @@ export class App extends Component<object, AppState> {
     this.setState(
       {
         searchValue: String(locationId),
-        searchType: "location",
+        searchType: "locations",
         currentPage: 1,
       },
       this.fetchSearchResults,
@@ -189,31 +317,31 @@ export class App extends Component<object, AppState> {
             onSearchTypeChange={this.handleSearchType}
             onSearch={this.handleSearch}
           />
-          {this.state.searchType === "character" &&
+          {this.state.searchType === "characters" &&
             this.state.error === false && (
               <CharactersList
-                charactersInfo={this.state.character.charactersInfo}
-                characters={this.state.character.characters}
+                charactersInfo={this.state.characters.info}
+                characters={this.state.characters.data}
                 currentPage={this.state.currentPage}
-                onPaginationChange={this.handlePagination}
+                renderPagination={this.renderPagination}
                 onEpisodeSelect={this.handleEpisodeClick}
                 onLocationSelect={this.handleLocationClick}
               />
             )}
-          {this.state.searchType === "location" &&
+          {this.state.searchType === "locations" &&
             this.state.error === false && (
               <LocationsList
-                locationsInfo={this.state.locations.locationsInfo}
-                locationsData={this.state.locations.locationsData}
+                locationsInfo={this.state.locations.info}
+                locationsData={this.state.locations.data}
                 currentPage={this.state.currentPage}
                 // onPaginationChange={this.handlePagination}
               />
             )}
-          {this.state.searchType === "episode" &&
+          {this.state.searchType === "episodes" &&
             this.state.error === false && (
               <EpisodesList
-                episodeInfo={this.state.episodes.episodesInfo}
-                episodesData={this.state.episodes.episodesData}
+                episodeInfo={this.state.episodes.info}
+                episodesData={this.state.episodes.data}
                 currentPage={this.state.currentPage}
                 // onPaginationChange={this.handlePagination}
               />
