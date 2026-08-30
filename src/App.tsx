@@ -85,7 +85,6 @@ export class App extends Component<object, AppState> {
   handleSearchType = (searchType: SearchType) => {
     this.setState({
       searchType: searchType,
-      currentPage: 1,
     });
   };
 
