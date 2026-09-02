@@ -1,12 +1,10 @@
 import { Component, type ReactNode } from "react";
 import type { Character, Location } from "../../../types/types";
-import request from "../../../../api/apiClient";
+import fetchResults from "../../../../api/apiClient";
 
 type LocationModalProps = {
   location: Location;
   onCloseModal: () => void;
-  onCharacterClick: () => void;
-  //   onCharacterSelect: (character: Character) => void;
 };
 
 type LocationModalState = {
@@ -29,14 +27,16 @@ class LocationModal extends Component<LocationModalProps, LocationModalState> {
     const characterIds: number[] = characterUrls.map((episodeUrl) => {
       return Number(episodeUrl.split("/").at(-1));
     });
+    // Если персонажей на локации нет запрос не отправляем
+    if (characterIds.length === 0) return;
     try {
       // Отправляем запрос с id персонажей
-      const characterData = await request(`/character/${characterIds}`);
+      const characterData = await fetchResults("characters", characterIds);
       // Записываем данные о персонажах в state locationModal
       this.setState({
-        characters: Array.isArray(characterData)
-          ? characterData
-          : [characterData],
+        characters: Array.isArray(characterData.results)
+          ? characterData.results
+          : [characterData.results],
       });
     } catch (error) {
       console.error(error);

@@ -1,10 +1,4 @@
 import { Component, type ReactNode } from "react";
-import Header from "./components/header/Header";
-import SearchForm from "./components/search-form/SearchForm";
-import fetchCharacters from "./api/characters";
-import fetchLocations from "./api/locations";
-import CharactersList from "./components/search-results/characters/CharactersList";
-import LocationsList from "./components/search-results/locations/LocationsList";
 import type {
   ResultsInfo,
   Character as CharacterData,
@@ -12,7 +6,11 @@ import type {
   Location,
   Episode,
 } from "./components/types/types";
-import fetchEpisodes from "./api/episodes";
+import fetchResults from "./api/apiClient";
+import Header from "./components/header/Header";
+import SearchForm from "./components/search-form/SearchForm";
+import CharactersList from "./components/search-results/characters/CharactersList";
+import LocationsList from "./components/search-results/locations/LocationsList";
 import EpisodesList from "./components/search-results/episodes/EpisodesList";
 
 type AppState = {
@@ -233,7 +231,8 @@ export class App extends Component<object, AppState> {
     // если приходит ошибка обрабатываем её
     if (this.state.searchType === "characters") {
       try {
-        const data = await fetchCharacters(
+        const data = await fetchResults(
+          this.state.searchType,
           this.state.searchValue,
           this.state.currentPage,
         );
@@ -246,13 +245,15 @@ export class App extends Component<object, AppState> {
           error: false,
         });
       } catch (error) {
+        console.log(error);
         this.setState({
           error: true,
         });
       }
     } else if (this.state.searchType === "locations") {
       try {
-        const data = await fetchLocations(
+        const data = await fetchResults(
+          this.state.searchType,
           this.state.searchValue,
           this.state.currentPage,
         );
@@ -261,13 +262,15 @@ export class App extends Component<object, AppState> {
           error: false,
         });
       } catch (error) {
+        console.log(error);
         this.setState({
           error: true,
         });
       }
     } else if (this.state.searchType === "episodes") {
       try {
-        const data = await fetchEpisodes(
+        const data = await fetchResults(
+          this.state.searchType,
           this.state.searchValue,
           this.state.currentPage,
         );
@@ -276,6 +279,7 @@ export class App extends Component<object, AppState> {
           error: false,
         });
       } catch (error) {
+        console.log(error);
         this.setState({
           error: true,
         });

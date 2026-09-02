@@ -1,6 +1,6 @@
 import { Component, type ReactNode } from "react";
 import type { Character, Episode } from "../../../types/types";
-import request from "../../../../api/apiClient";
+import fetchResults from "../../../../api/apiClient";
 
 type CharacterModalProps = {
   character: Character;
@@ -33,10 +33,10 @@ class CharacterModal extends Component<
       return Number(episodeUrl.split("/").at(-1));
     });
     try {
-      const episodesData = await request(`/episode/${episodesIds}`);
+      const episodesData = await fetchResults("episodes", episodesIds);
 
       this.setState({
-        episode: Array.isArray(episodesData) ? episodesData : [episodesData],
+        episode: Array.isArray(episodesData.results) ? episodesData.results : [episodesData.results],
       });
     } catch (error) {
       console.error(error);
