@@ -288,7 +288,7 @@ export class App extends Component<object, AppState> {
   };
 
   // Колбэк для клика по эпизоду
-  handleEpisodeClick = (episode: Episode) => {
+  handleEpisodeSelect = (episode: Episode) => {
     this.setState(
       {
         searchValue: String(episode.id),
@@ -299,11 +299,22 @@ export class App extends Component<object, AppState> {
     );
   };
   // Коллбэк для клика по локации
-  handleLocationClick = (locationId: number) => {
+  handleLocationSelect = (locationId: number) => {
     this.setState(
       {
         searchValue: String(locationId),
         searchType: "locations",
+        currentPage: 1,
+      },
+      this.fetchSearchResults,
+    );
+  };
+  // Коллбэк для клика по персонажу
+  handleCharacterSelect = (character: CharacterData) => {
+    this.setState(
+      {
+        searchValue: String(character.id),
+        searchType: "characters",
         currentPage: 1,
       },
       this.fetchSearchResults,
@@ -327,8 +338,8 @@ export class App extends Component<object, AppState> {
                 characters={this.state.characters.data}
                 currentPage={this.state.currentPage}
                 renderPagination={this.renderPagination}
-                onEpisodeSelect={this.handleEpisodeClick}
-                onLocationSelect={this.handleLocationClick}
+                onEpisodeSelect={this.handleEpisodeSelect}
+                onLocationSelect={this.handleLocationSelect}
               />
             )}
           {this.state.searchType === "locations" &&
@@ -337,7 +348,8 @@ export class App extends Component<object, AppState> {
                 locationsInfo={this.state.locations.info}
                 locationsData={this.state.locations.data}
                 currentPage={this.state.currentPage}
-                // onPaginationChange={this.handlePagination}
+                renderPagination={this.renderPagination}
+                onCharacterSelect={this.handleCharacterSelect}
               />
             )}
           {this.state.searchType === "episodes" &&
@@ -346,7 +358,8 @@ export class App extends Component<object, AppState> {
                 episodeInfo={this.state.episodes.info}
                 episodesData={this.state.episodes.data}
                 currentPage={this.state.currentPage}
-                // onPaginationChange={this.handlePagination}
+                renderPagination={this.renderPagination}
+                onCharacterSelect={this.handleCharacterSelect}
               />
             )}
           {this.state.error === true && (

@@ -1,7 +1,16 @@
 import { Component, type ReactNode } from "react";
-import type { Character, CharactersListProps } from "../../types/types";
+import type { ResultsInfo, Character, Episode } from "../../types/types";
 import CharacterCard from "./CharacterCard";
 import CharacterModal from "./modal/CharacterModal";
+
+type CharactersListProps = {
+  charactersInfo: ResultsInfo;
+  characters: Character[];
+  currentPage: number;
+  renderPagination: () => ReactNode;
+  onEpisodeSelect: (episode: Episode) => void;
+  onLocationSelect: (locationId: number) => void;
+};
 
 type CharacterListState = {
   selectedCharacter: Character | null;

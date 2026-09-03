@@ -5,6 +5,7 @@ import fetchResults from "../../../../api/apiClient";
 type LocationModalProps = {
   location: Location;
   onCloseModal: () => void;
+  onCharacterSelect: (character: Character) => void;
 };
 
 type LocationModalState = {
@@ -52,7 +53,7 @@ class LocationModal extends Component<LocationModalProps, LocationModalState> {
               {/* При клике на эпизод вызываем коллбэк запроса App */}
               <a
                 className="location-modal__character-name"
-                // onClick={() => this.props.onEpisodeSelect(episode)}
+                onClick={() => this.props.onCharacterSelect(character)}
               >
                 {character.name}
               </a>

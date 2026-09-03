@@ -1,6 +1,15 @@
 import { Component, type ReactNode } from "react";
-import type { Episode, EpisodeListProps } from "../../types/types";
+import type { ResultsInfo, Episode, Character } from "../../types/types";
 import EpisodesCard from "./EpisodCard";
+import EpisodesModal from "./modal/EpisodesModal";
+
+type EpisodeListProps = {
+  episodeInfo: ResultsInfo;
+  episodesData: Episode[];
+  currentPage: number;
+  onCharacterSelect: (character: Character) => void;
+  renderPagination: () => ReactNode;
+};
 
 type EpisodeListState = {
   selectedEpisode: Episode | null;
@@ -24,12 +33,13 @@ class EpisodesList extends Component<EpisodeListProps, EpisodeListState> {
     return (
       <>
         {/* // При выборе персонажа создаётся модальное окно */}
-        {/* {this.state.selectedLocation && (
-          <CharacterModal
-            character={this.state.selectedCharacter}
+        {this.state.selectedEpisode && (
+          <EpisodesModal
+            episode={this.state.selectedEpisode}
             onCloseModal={this.handleModalClose}
+            onCharacterSelect={this.props.onCharacterSelect}
           />
-        )} */}
+        )}
         <ul className="search__results--episode episode-list">
           {this.props.episodesData.map((episode) => {
             return (
@@ -41,9 +51,9 @@ class EpisodesList extends Component<EpisodeListProps, EpisodeListState> {
             );
           })}
         </ul>
-        {/* <div className="search__results--pagination">
-          {this.handlePagination()}
-        </div> */}
+        <div className="search__results--pagination">
+          {this.props.renderPagination()}
+        </div>
       </>
     );
   }

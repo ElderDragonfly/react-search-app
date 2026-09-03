@@ -1,7 +1,15 @@
 import { Component, type ReactNode } from "react";
-import type { Location, LocationsListProps } from "../../types/types";
+import type { ResultsInfo, Location, Character } from "../../types/types";
 import LocationCard from "./LocationCard";
 import LocationModal from "./modal/LocationModal";
+
+type LocationsListProps = {
+  locationsInfo: ResultsInfo;
+  locationsData: Location[];
+  currentPage: number;
+  onCharacterSelect: (character: Character) => void;
+  renderPagination: () => ReactNode;
+};
 
 type LocationListState = {
   selectedLocation: Location | null;
@@ -29,6 +37,7 @@ class LocationsList extends Component<LocationsListProps, LocationListState> {
           <LocationModal
             location={this.state.selectedLocation}
             onCloseModal={this.handleModalClose}
+            onCharacterSelect={this.props.onCharacterSelect}
           />
         )}
         <ul className="search__results--locations locations-list">
@@ -42,9 +51,9 @@ class LocationsList extends Component<LocationsListProps, LocationListState> {
             );
           })}
         </ul>
-        {/* <div className="search__results--pagination">
-          {this.handlePagination()}
-        </div> */}
+        <div className="search__results--pagination">
+          {this.props.renderPagination()}
+        </div>
       </>
     );
   }
