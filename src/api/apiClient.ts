@@ -1,9 +1,15 @@
 import { ApiError } from "./errors/ApiError";
-import type { Character, Episode, Location } from "../components/types/types";
+import type {
+  Character,
+  Episode,
+  Location,
+  ResultsInfo,
+} from "../components/types/types";
+import type { CharacterFilter } from "./fetchCharacter";
 
 const BASE_URL = "https://rickandmortyapi.com/api";
 
-export function request(path: string) {
+function request(path: string) {
   return fetch(BASE_URL + path).then((response) => {
     if (response.ok) {
       return response.json();
@@ -14,86 +20,98 @@ export function request(path: string) {
   });
 }
 
-// export default request;
-
 type SearchTypeMap = {
-  characters: Character,
-  locations: Location,
-  episodes: Episode
-}
+  characters: { info: ResultsInfo; results: Character[] };
+  locations: { info: ResultsInfo; results: Location[] };
+  episodes: { info: ResultsInfo; results: Episode[] };
+};
 
-export async function fetchResults<Type extends keyof SearchTypeMap>(searchType: Type, query: string | number | number[], page: number = 1): Promise<SearchTypeMap[Type]> {
+async function fetchResultsLegacy<Type extends keyof SearchTypeMap>(
+  searchType: Type,
+  query: string | number | number[],
+  page: number = 1,
+): Promise<SearchTypeMap[Type]> {
   // Приводим searchType к тому, чтобы использовать в URL запроса
   const searchTypePath = searchType.slice(0, -1);
   // Если введённые данные это строка
-  if(typeof(query) === 'string') {
-// Проверяем ввод на то что это название searchType и тогда ищем searchType по названию
-  const containsLetters = /[a-zA-Z]/.test(query);
-  if (containsLetters) {
-    try {
-      const response = await request(
-        `/${searchTypePath}?name=${encodeURIComponent(query)}&page=${page}`,
-      );
-      return response;
-    } catch (error) {
-      console.log(error);
+  if (typeof query === "string") {
+    // Проверяем ввод на то что это название searchType и тогда ищем searchType по названию
+    const containsLetters = /[a-zA-Z]/.test(query);
+    if (containsLetters) {
+      try {
+        const response: SearchTypeMap[Type] = await request(
+          `/${searchTypePath}?name=${encodeURIComponent(query)}&page=${page}`,
+        );
+        return response;
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
     }
-  }
 
-  // Проверяем ввод на то что это id searchType и тогда ищем searchType по id
-  const containsOnlyDigits = /^\d+$/.test(query);
-  if (containsOnlyDigits) {
-    try {
-      const response = await request(`/${searchTypePath}/${encodeURIComponent(query)}`);
-      return {
-        info: {
-          count: 1,
-          pages: 1,
-          next: null,
-          prev: null,
-        },
-        results: Array.isArray(response) ? response : [response],
-      };
-    } catch (error) {
-      console.log(error);
+    // Проверяем ввод на то что это id searchType и тогда ищем searchType по id
+    const containsOnlyDigits = /^\d+$/.test(query);
+    if (containsOnlyDigits) {
+      try {
+        const response = await request(
+          `/${searchTypePath}/${encodeURIComponent(query)}`,
+        );
+        return {
+          info: {
+            count: 1,
+            pages: 1,
+            next: null,
+            prev: null,
+          },
+          results: Array.isArray(response) ? response : [response],
+        };
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
     }
-  }
 
-  // Проверяем ввод на то что это несколько id searchType и тогда ищем все нужные searchType по id
-  const parts = query.trim().split(/[,\s]+/);
-  const containsOnlyIds =
-    query.trim() !== "" && parts.every((part) => /^\d+$/.test(part));
-  const ids = parts.map(Number);
-  if (containsOnlyIds) {
-    try {
-      const response = await request(`/${searchTypePath}/${ids.join(",")}`);
-      const results = Array.isArray(response) ? response : [response];
-      return {
-        info: {
-          count: results.length,
-          pages: 1,
-          next: null,
-          prev: null,
-        },
-        results: results,
-      };
-    } catch (error) {
-      console.log(error);
+    // Проверяем ввод на то что это несколько id searchType и тогда ищем все нужные searchType по id
+    const parts = query.trim().split(/[,\s]+/);
+    const containsOnlyIds =
+      query.trim() !== "" && parts.every((part) => /^\d+$/.test(part));
+    const ids = parts.map(Number);
+    if (containsOnlyIds) {
+      try {
+        const response = await request(`/${searchTypePath}/${ids.join(",")}`);
+        const results = Array.isArray(response) ? response : [response];
+        return {
+          info: {
+            count: results.length,
+            pages: 1,
+            next: null,
+            prev: null,
+          },
+          results: results,
+        };
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
     }
-  }
 
-  // Проверяем ввод на то что там пустая строка
-  if (!query.trim()) {
-    try {
-      const response = await request(`/${searchTypePath}?page=${page}`);
-      return response;
-    } catch (error) {
-      console.log(error);
+    // Проверяем ввод на то что там пустая строка
+    if (!query.trim()) {
+      try {
+        const response = await request(`/${searchTypePath}?page=${page}`);
+        return response;
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
     }
-  }
   }
   // Если введённые данные число или массив чисел
-  else if (typeof(query) === 'number' || Array.isArray(query) && query.every(item => typeof item === 'number' && !isNaN(item))) {
+  else if (
+    typeof query === "number" ||
+    (Array.isArray(query) &&
+      query.every((item) => typeof item === "number" && !isNaN(item)))
+  ) {
     try {
       const response = await request(`/${searchTypePath}/${query}`);
       const results = Array.isArray(response) ? response : [response];
@@ -108,9 +126,123 @@ export async function fetchResults<Type extends keyof SearchTypeMap>(searchType:
       };
     } catch (error) {
       console.log(error);
+      throw error;
     }
   }
-  
+
+  // Если пользователь ввёл формально верный но невалидный запрос
+  throw new Error("Invalid query format");
 }
 
-export default fetchResults;
+type FiltersType = CharacterFilter;
+
+export async function fetchResults<Type extends keyof SearchTypeMap>(
+  searchType: Type,
+  filters: FiltersType[],
+  query: string | number | number[],
+  page: number = 1,
+): Promise<SearchTypeMap[Type]> {
+  // Приводим searchType к тому, чтобы использовать в URL запроса
+  const searchTypePath = searchType.slice(0, -1);
+  // Если введённые данные это строка
+  if (typeof query === "string") {
+    // Проверяем ввод на то что это название searchType и тогда ищем searchType по названию
+    const containsLetters = /[a-zA-Z]/.test(query);
+    if (containsLetters) {
+      try {
+        const response: SearchTypeMap[Type] = await request(
+          `/${searchTypePath}?${filters}=${encodeURIComponent(query)}&page=${page}`,
+        );
+        return response;
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
+    }
+
+    // Проверяем ввод на то что это id searchType и тогда ищем searchType по id
+    const containsOnlyDigits = /^\d+$/.test(query);
+    if (containsOnlyDigits) {
+      try {
+        const response = await request(
+          `/${searchTypePath}/${encodeURIComponent(query)}`,
+        );
+        return {
+          info: {
+            count: 1,
+            pages: 1,
+            next: null,
+            prev: null,
+          },
+          results: Array.isArray(response) ? response : [response],
+        };
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
+    }
+
+    // Проверяем ввод на то что это несколько id searchType и тогда ищем все нужные searchType по id
+    const parts = query.trim().split(/[,\s]+/);
+    const containsOnlyIds =
+      query.trim() !== "" && parts.every((part) => /^\d+$/.test(part));
+    const ids = parts.map(Number);
+    if (containsOnlyIds) {
+      try {
+        const response = await request(`/${searchTypePath}/${ids.join(",")}`);
+        const results = Array.isArray(response) ? response : [response];
+        return {
+          info: {
+            count: results.length,
+            pages: 1,
+            next: null,
+            prev: null,
+          },
+          results: results,
+        };
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
+    }
+
+    // Проверяем ввод на то что там пустая строка
+    if (!query.trim()) {
+      try {
+        const response = await request(`/${searchTypePath}?page=${page}`);
+        return response;
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
+    }
+  }
+  // Если введённые данные число или массив чисел
+  else if (
+    typeof query === "number" ||
+    (Array.isArray(query) &&
+      query.every((item) => typeof item === "number" && !isNaN(item)))
+  ) {
+    try {
+      const response = await request(`/${searchTypePath}/${query}`);
+      const results = Array.isArray(response) ? response : [response];
+      return {
+        info: {
+          count: results.length,
+          pages: 1,
+          next: null,
+          prev: null,
+        },
+        results: results,
+      };
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+
+  // Если пользователь ввёл формально верный но невалидный запрос
+  throw new Error("Invalid query format");
+}
+
+export default fetchResultsLegacy;
