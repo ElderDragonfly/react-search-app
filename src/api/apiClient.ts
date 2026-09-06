@@ -1,9 +1,9 @@
 import { ApiError } from "./errors/ApiError";
-import type { SearchType } from "../components/types/types";
+import type { Character, Episode, Location } from "../components/types/types";
 
 const BASE_URL = "https://rickandmortyapi.com/api";
 
-function request(path: string) {
+export function request(path: string) {
   return fetch(BASE_URL + path).then((response) => {
     if (response.ok) {
       return response.json();
@@ -14,7 +14,15 @@ function request(path: string) {
   });
 }
 
-export async function fetchResults(searchType: SearchType, query: string | number | number[], page: number = 1) {
+// export default request;
+
+type SearchTypeMap = {
+  characters: Character,
+  locations: Location,
+  episodes: Episode
+}
+
+export async function fetchResults<Type extends keyof SearchTypeMap>(searchType: Type, query: string | number | number[], page: number = 1): Promise<SearchTypeMap[Type]> {
   // Приводим searchType к тому, чтобы использовать в URL запроса
   const searchTypePath = searchType.slice(0, -1);
   // Если введённые данные это строка
