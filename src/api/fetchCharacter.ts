@@ -1,4 +1,4 @@
-import { fetchResults } from "./apiClient";
+// import { fetchResults } from "./apiClient";
 
 export type CharacterFilter = {
   name: string;
@@ -8,8 +8,8 @@ export type CharacterFilter = {
   gender: "female" | "male" | "genderless" | "unknown";
 };
 
-function fetchCharacter(query: string | number | number[], page: number = 1) {
-  return fetchResults("characters", query, page);
-}
+// function fetchCharacter(query: string | number | number[], page: number = 1) {
+//   return fetchResults("characters", query, page);
+// }
 
-export default fetchCharacter;
+// export default fetchCharacter;
