@@ -32,41 +32,47 @@ type AppState = {
   error: boolean;
 };
 
+const createInitialState = (): AppState => ({
+  characters: {
+    info: {
+      count: 0,
+      pages: 0,
+      next: null,
+      prev: null,
+    },
+    data: [],
+  },
+
+  locations: {
+    info: {
+      count: 0,
+      pages: 0,
+      next: null,
+      prev: null,
+    },
+    data: [],
+  },
+
+  episodes: {
+    info: {
+      count: 0,
+      pages: 0,
+      next: null,
+      prev: null,
+    },
+    data: [],
+  },
+
+  searchValue: "",
+  searchType: "characters",
+  currentPage: 1,
+  error: false,
+});
+
 export class App extends Component<object, AppState> {
   // Создаём поле state
-  state: AppState = {
-    characters: {
-      info: {
-        count: 0,
-        pages: 0,
-        next: "",
-        prev: null,
-      },
-      data: [],
-    },
-    locations: {
-      info: {
-        count: 0,
-        pages: 0,
-        next: null,
-        prev: null,
-      },
-      data: [],
-    },
-    episodes: {
-      info: {
-        count: 0,
-        pages: 0,
-        next: null,
-        prev: null,
-      },
-      data: [],
-    },
-    searchValue: "",
-    searchType: "characters",
-    currentPage: 1,
-    error: false,
-  };
+  state: AppState = createInitialState();
+
   // Функция-колбек для поиска
   handleSearch = (searchValue: string) => {
     // Записываем текущее значение value и типа поиска
@@ -80,10 +86,9 @@ export class App extends Component<object, AppState> {
     );
   };
 
+  // Сбрасываем state и меняем тип поиска
   handleSearchType = (searchType: SearchType) => {
-    this.setState({
-      searchType: searchType,
-    });
+    this.setState({ ...createInitialState(), searchType });
   };
 
   // Управление пагинацией
@@ -285,6 +290,9 @@ export class App extends Component<object, AppState> {
         });
       }
     }
+    // this.setState({
+    //   searchValue: "",
+    // });
   };
 
   // Колбэк для клика по эпизоду

@@ -33,6 +33,7 @@ class SearchForm extends Component<SearchProps, SearchState> {
   handleSubmit = (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     this.props.onSearch(this.state.query);
+    // this.setState({ query: "" });
   };
 
   render(): ReactNode {
