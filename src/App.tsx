@@ -76,10 +76,16 @@ export class App extends Component<object, AppState> {
   state: AppState = createInitialState();
 
   // Следим за изменениями loading в state
-  сomponentDidUpdate() {}
+  componentDidUpdate() {
+    if (this.state.loading) {
+      console.log();
+    }
+  }
 
   // Функция-колбек для поиска
   handleSearch = (searchValue: string) => {
+    // Не меняем state если загрузка активна
+    if (this.state.loading) return;
     // Записываем текущее значение value и типа поиска
     this.setState(
       {
@@ -93,11 +99,15 @@ export class App extends Component<object, AppState> {
 
   // Сбрасываем state и меняем тип поиска
   handleSearchType = (searchType: SearchType) => {
+    // Не меняем state если загрузка активна
+    if (this.state.loading) return;
     this.setState({ ...createInitialState(), searchType });
   };
 
   // Управление пагинацией
   handlePagination = (newPage: number) => {
+    // Не меняем state если загрузка активна
+    if (this.state.loading) return;
     this.setState(
       { currentPage: newPage },
       // Вызываем функцию запроса с обновлёнными параметрами
@@ -237,7 +247,6 @@ export class App extends Component<object, AppState> {
   // выбранного типа поиска и номера страницы
   // и запись ответа в state App
   fetchSearchResults = async () => {
-    this.setState({ loading: true });
     // Если загрузка уже идёт выходим из функции
     if (this.state.loading === true) {
       return;
@@ -302,10 +311,9 @@ export class App extends Component<object, AppState> {
         this.setState({
           error: true,
         });
-      } finally {
-        this.setState({ loading: false });
       }
     }
+    this.setState({ loading: false });
   };
 
   // Колбэк для клика по эпизоду
@@ -349,6 +357,7 @@ export class App extends Component<object, AppState> {
         <main>
           <SearchForm
             searchType={this.state.searchType}
+            loading={this.state.loading}
             onSearchTypeChange={this.handleSearchType}
             onSearch={this.handleSearch}
           />

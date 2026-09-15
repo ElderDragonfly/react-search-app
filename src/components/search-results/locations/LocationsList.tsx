@@ -1,5 +1,5 @@
 import { Component, type ReactNode } from "react";
-import type { ResultsInfo, Location, Character } from "../../types/types";
+import type { Location, Character } from "../../types/types";
 import LocationCard from "./LocationCard";
 import LocationModal from "./modal/LocationModal";
 

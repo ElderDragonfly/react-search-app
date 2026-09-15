@@ -7,6 +7,7 @@
     gap: 15px
 
 // ----------------------------------------------------------------------
+// Поле поиска и кнопка
 
 .search__input-wrapper
     position: relative
@@ -31,19 +32,60 @@
     padding: 10px 5px 10px 40px
     border: 1px solid rgba(vars.$font-color, .5)
     border-radius: 5px
+    background-color: #ffffff
+    transition: border-color .2s, box-shadow .2s
 
     &::placeholder
         color: inherit
         opacity: .5
         font: inherit
 
+    &:focus
+        border-color: vars.$portal-color
+        outline: none
+        box-shadow: 0 0 0 3px rgba(vars.$portal-color, .2)
+
 .search__button
     @include vars.button
+
     position: absolute
     top: 0
     left: calc(100% + 15px)
 
+    display: inline-flex
+    align-items: center
+    justify-content: center
+    gap: 8px
+
+    width: 130px
+    color: vars.$button-text-color
+    white-space: nowrap
+
+    transition: background-color .3s, opacity .3s
+
+    // Кнопка находится в состоянии загрузки
+    &:disabled
+        background-color: vars.$button-color
+        opacity: .6
+        cursor: wait
+
+    // Крутилка появляется без дополнительного JSX
+    &:disabled::before
+        content: ""
+        width: 14px
+        height: 14px
+        flex-shrink: 0
+        border: 2px solid rgba(vars.$button-text-color, .4)
+        border-top-color: vars.$button-text-color
+        border-radius: 50%
+        animation: search-loading-spin .7s linear infinite
+
+@keyframes search-loading-spin
+    to
+        transform: rotate(360deg)
+
 // ----------------------------------------------------------------------
+// Переключатели типа поиска
 
 .search__type-wrapper
     display: flex
@@ -58,8 +100,10 @@
     padding: 4px 2px 9px
     color: rgba(vars.$font-color, .6)
     cursor: pointer
-    transition: color .2s
+    user-select: none
+    transition: color .2s, opacity .2s
 
+    // Полоска под выбранным типом поиска
     &::after
         content: ""
         position: absolute
@@ -70,11 +114,12 @@
         border-radius: 3px 3px 0 0
         background-color: vars.$portal-color
         transform: scaleX(0)
-        transition: transform .2s
+        transition: transform .2s, opacity .2s
 
     &:hover
         color: vars.$font-color
 
+    // Выбранный переключатель
     &:has(.search__type:checked)
         color: vars.$font-color
         font-weight: 600
@@ -82,6 +127,29 @@
         &::after
             transform: scaleX(1)
 
+    // Видимый фокус при управлении клавиатурой
+    &:has(.search__type:focus-visible)
+        border-radius: 3px
+        outline: 2px solid rgba(vars.$portal-color, .7)
+        outline-offset: 3px
+
+    // Переключатель заблокирован во время загрузки
+    &:has(.search__type:disabled)
+        color: rgba(vars.$font-color, .35)
+        opacity: .7
+        cursor: not-allowed
+
+        &:hover
+            color: rgba(vars.$font-color, .35)
+
+        &::after
+            opacity: .4
+
 .search__type
     position: absolute
+    width: 1px
+    height: 1px
+    overflow: hidden
     opacity: 0
+    clip-path: inset(50%)
+    white-space: nowrap

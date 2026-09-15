@@ -8,6 +8,7 @@ import type { SearchType } from "../types/types";
 
 type SearchProps = {
   searchType: SearchType;
+  loading: boolean;
   onSearchTypeChange: (searchType: SearchType) => void;
   onSearch: (searchValue: string) => void;
 };
@@ -55,14 +56,21 @@ class SearchForm extends Component<SearchProps, SearchState> {
               placeholder={`Search ${this.props.searchType}...`}
               onChange={this.handleChange}
               // Для очистки после нажатия кнопки отправки
-              value = {this.state.query}
+              value={this.state.query}
             />
-            <button type="submit" className="search__button">
-              Search
+            <button
+              type="submit"
+              className="search__button"
+              disabled={this.props.loading}
+            >
+              {this.props.loading ? "Loading..." : "Search"}
             </button>
           </div>
 
-          <fieldset className="search__type-wrapper">
+          <fieldset
+            className="search__type-wrapper"
+            disabled={this.props.loading}
+          >
             <label className="search__label">
               <input
                 type="radio"

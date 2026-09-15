@@ -1,5 +1,5 @@
 import { Component, type ReactNode } from "react";
-import type { ResultsInfo, Episode, Character } from "../../types/types";
+import type { Episode, Character } from "../../types/types";
 import EpisodesCard from "./EpisodCard";
 import EpisodesModal from "./modal/EpisodesModal";
 
