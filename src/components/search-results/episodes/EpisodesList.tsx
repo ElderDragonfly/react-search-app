@@ -5,6 +5,7 @@ import EpisodesModal from "./modal/EpisodesModal";
 
 type EpisodeListProps = {
   episodesData: Episode[];
+  loading: boolean;
   onCharacterSelect: (character: Character) => void;
   renderPagination: () => ReactNode;
 };
@@ -43,6 +44,7 @@ class EpisodesList extends Component<EpisodeListProps, EpisodeListState> {
             return (
               <EpisodesCard
                 key={episode.id}
+                loading={this.props.loading}
                 onSelect={this.handleSelecteEpisodeCard}
                 episode={episode}
               />

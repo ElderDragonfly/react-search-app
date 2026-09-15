@@ -1,0 +1,46 @@
+@use '_variables' as vars
+    
+.search__results--pagination
+    display: flex
+    justify-content: center
+    align-items: center
+    gap: 8px
+    width: 100%
+    padding-bottom: 20px
+
+.pagination__button
+    @include vars.button
+    min-width: 42px
+    height: 42px
+    padding: 0 12px
+    color: vars.$font-color
+    background-color: transparent
+    border-color: rgba(vars.$font-color, .25)
+    transition: background-color .2s, border-color .2s, color .2s, transform .1s, opacity .2s
+
+    &:not(:disabled):hover
+        color: vars.$button-text-color
+        border-color: vars.$button-hover-color
+        background-color: vars.$button-hover-color
+
+    &:not(:disabled):active
+        transform: translateY(1px)
+
+    &:focus-visible
+        outline: 3px solid rgba(vars.$portal-color, .3)
+        outline-offset: 2px
+
+    &:disabled:not(.pagination__button--active)
+        color: rgba(vars.$font-color, .35)
+        background-color: transparent
+        border-color: rgba(vars.$font-color, .15)
+        opacity: .6
+        cursor: not-allowed
+
+    &--active
+        color: vars.$button-text-color
+        background-color: vars.$button-color
+        border-color: vars.$button-color
+        box-shadow: 0 0 0 3px rgba(vars.$portal-color, .2)
+        font-weight: 600
+        cursor: default

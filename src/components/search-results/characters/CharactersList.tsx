@@ -5,6 +5,7 @@ import CharacterModal from "./modal/CharacterModal";
 
 type CharactersListProps = {
   characters: Character[];
+  loading: boolean;
   renderPagination: () => ReactNode;
   onEpisodeSelect: (episode: Episode) => void;
   onLocationSelect: (locationId: number) => void;
@@ -48,6 +49,7 @@ class CharactersList extends Component<
             return (
               <CharacterCard
                 key={character.id}
+                loading={this.props.loading}
                 onSelect={this.handleSelecteCharacterCard}
                 character={character}
               />

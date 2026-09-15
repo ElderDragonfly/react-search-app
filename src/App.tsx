@@ -75,13 +75,6 @@ export class App extends Component<object, AppState> {
   // Создаём поле state
   state: AppState = createInitialState();
 
-  // Следим за изменениями loading в state
-  componentDidUpdate() {
-    if (this.state.loading) {
-      console.log();
-    }
-  }
-
   // Функция-колбек для поиска
   handleSearch = (searchValue: string) => {
     // Не меняем state если загрузка активна
@@ -127,7 +120,7 @@ export class App extends Component<object, AppState> {
           {/* Стрелка для пролистывания пагинации к началу */}
           <button
             className="pagination__button"
-            disabled={currentPage === 1}
+            disabled={currentPage === 1 || this.state.loading}
             onClick={() => {
               if (currentPage - 1 >= 1) {
                 this.handlePagination(this.state.currentPage - 1);
@@ -147,6 +140,7 @@ export class App extends Component<object, AppState> {
                   onClick={() => {
                     this.handlePagination(1);
                   }}
+                  disabled={this.state.loading}
                 >
                   1
                 </button>
@@ -161,6 +155,7 @@ export class App extends Component<object, AppState> {
               onClick={() => {
                 this.handlePagination(currentPage - 2);
               }}
+              disabled={this.state.loading}
             >
               {this.state.currentPage - 2}
             </button>
@@ -172,6 +167,7 @@ export class App extends Component<object, AppState> {
               onClick={() => {
                 this.handlePagination(currentPage - 1);
               }}
+              disabled={this.state.loading}
             >
               {this.state.currentPage - 1}
             </button>
@@ -190,6 +186,7 @@ export class App extends Component<object, AppState> {
               onClick={() => {
                 this.handlePagination(currentPage + 1);
               }}
+              disabled={this.state.loading}
             >
               {this.state.currentPage + 1}
             </button>
@@ -202,6 +199,7 @@ export class App extends Component<object, AppState> {
                 onClick={() => {
                   this.handlePagination(currentPage + 2);
                 }}
+                disabled={this.state.loading}
               >
                 {this.state.currentPage + 2}
               </button>
@@ -221,6 +219,7 @@ export class App extends Component<object, AppState> {
                   onClick={() => {
                     this.handlePagination(this.state[type].info.pages);
                   }}
+                  disabled={this.state.loading}
                 >
                   {this.state[type].info.pages}
                 </button>
@@ -229,7 +228,7 @@ export class App extends Component<object, AppState> {
           {/* Стрелка для пролистывания пагинации к концу */}
           <button
             className={"pagination__button"}
-            disabled={currentPage === pages}
+            disabled={currentPage === pages || this.state.loading}
             onClick={() => {
               if (currentPage + 1 <= pages) {
                 this.handlePagination(this.state.currentPage + 1);
@@ -277,6 +276,8 @@ export class App extends Component<object, AppState> {
         this.setState({
           error: true,
         });
+      } finally {
+        this.setState({ loading: false });
       }
     } else if (this.state.searchType === "locations") {
       try {
@@ -294,6 +295,8 @@ export class App extends Component<object, AppState> {
         this.setState({
           error: true,
         });
+      } finally {
+        this.setState({ loading: false });
       }
     } else if (this.state.searchType === "episodes") {
       try {
@@ -311,9 +314,10 @@ export class App extends Component<object, AppState> {
         this.setState({
           error: true,
         });
+      } finally {
+        this.setState({ loading: false });
       }
     }
-    this.setState({ loading: false });
   };
 
   // Колбэк для клика по эпизоду
@@ -365,6 +369,7 @@ export class App extends Component<object, AppState> {
             this.state.error === false && (
               <CharactersList
                 characters={this.state.characters.data}
+                loading={this.state.loading}
                 renderPagination={this.renderPagination}
                 onEpisodeSelect={this.handleEpisodeSelect}
                 onLocationSelect={this.handleLocationSelect}
@@ -374,6 +379,7 @@ export class App extends Component<object, AppState> {
             this.state.error === false && (
               <LocationsList
                 locationsData={this.state.locations.data}
+                loading={this.state.loading}
                 renderPagination={this.renderPagination}
                 onCharacterSelect={this.handleCharacterSelect}
               />
@@ -382,6 +388,7 @@ export class App extends Component<object, AppState> {
             this.state.error === false && (
               <EpisodesList
                 episodesData={this.state.episodes.data}
+                loading={this.state.loading}
                 renderPagination={this.renderPagination}
                 onCharacterSelect={this.handleCharacterSelect}
               />

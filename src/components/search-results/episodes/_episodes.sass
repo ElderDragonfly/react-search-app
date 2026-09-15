@@ -107,6 +107,11 @@
             text-transform: uppercase
             letter-spacing: .05em
 
+    &--disabled
+        opacity: .5
+        cursor: not-allowed
+        pointer-events: none
+
 @media (max-width: vars.$breakpoint-laptop)
     .episode-list
         grid-template-columns: repeat(3, minmax(0, 1fr))

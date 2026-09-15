@@ -5,6 +5,7 @@ import LocationModal from "./modal/LocationModal";
 
 type LocationsListProps = {
   locationsData: Location[];
+  loading: boolean;
   onCharacterSelect: (character: Character) => void;
   renderPagination: () => ReactNode;
 };
@@ -43,6 +44,7 @@ class LocationsList extends Component<LocationsListProps, LocationListState> {
             return (
               <LocationCard
                 key={location.id}
+                loading={this.props.loading}
                 onSelect={this.handleSelecteLocationCard}
                 location={location}
               />

@@ -3,13 +3,14 @@ import type { Character } from "../../types/types";
 
 type CharacterCardProps = {
   character: Character;
+  loading: boolean;
   onSelect: (character: Character) => void;
 };
 
 class CharacterCard extends Component<CharacterCardProps> {
   render(): ReactNode {
     return (
-      <li className="character-card">
+      <li className={`character-card${this.props.loading ? ' character-card--disabled' : ''}`}>
         <button onClick={() => this.props.onSelect(this.props.character)}>
           <img
             className="character-card__image"

@@ -3,6 +3,7 @@ import type { Episode } from "../../types/types";
 
 type EpisodeCardProps = {
   episode: Episode;
+  loading: boolean;
   onSelect: (episode: Episode) => void;
 };
 
@@ -11,7 +12,7 @@ class EpisodesCard extends Component<EpisodeCardProps> {
     const { episode } = this.props;
 
     return (
-      <li className="episode-card">
+      <li className={`episode-card${this.props.loading ? ' episode-card--disabled' : ''}`}>
         <button
           className="episode-card__button"
           type="button"

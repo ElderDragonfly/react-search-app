@@ -74,46 +74,10 @@
     &__label
         color: rgba(vars.$font-color, .6)
 
-.search__results--pagination
-    display: flex
-    justify-content: center
-    align-items: center
-    gap: 8px
-    width: 100%
-    padding-bottom: 20px
-
-.pagination__button
-    @include vars.button
-    min-width: 42px
-    height: 42px
-    padding: 0 12px
-    color: vars.$font-color
-    background-color: transparent
-    border-color: rgba(vars.$font-color, .25)
-    transition: background-color .2s, border-color .2s, color .2s, transform .1s
-
-    &:hover
-        color: vars.$button-text-color
-        border-color: vars.$button-hover-color
-        background-color: vars.$button-hover-color
-
-    &:active
-        transform: translateY(1px)
-
-    &:focus-visible
-        outline: 3px solid rgba(vars.$portal-color, .3)
-        outline-offset: 2px
-
-    &--active
-        color: vars.$button-text-color
-        background-color: vars.$button-color
-        border-color: vars.$button-color
-        box-shadow: 0 0 0 3px rgba(vars.$portal-color, .2)
-        font-weight: 600
-        cursor: default
-
-        &:hover
-            background-color: vars.$button-color
+    &--disabled
+        opacity: .5
+        cursor: not-allowed
+        pointer-events: none
 
 @media (max-width: vars.$breakpoint-laptop)
     .characters-list

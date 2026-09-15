@@ -3,13 +3,14 @@ import type { Location } from "../../types/types";
 
 type LocationCardProps = {
   location: Location;
+  loading: boolean;
   onSelect: (location: Location) => void;
 };
 
 class LocationCard extends Component<LocationCardProps> {
   render(): ReactNode {
     return (
-      <li className="location-card">
+      <li className={`location-card${this.props.loading ? ' location-card--disabled' : ''}`}>
         <button onClick={() => this.props.onSelect(this.props.location)}>
           <div className="location-card__content">
             <h2 className="location-card__name">{this.props.location.name}</h2>

@@ -112,6 +112,11 @@
             &:hover
                 text-decoration: underline
 
+    &--disabled
+        opacity: .5
+        cursor: not-allowed
+        pointer-events: none
+
 @media (max-width: vars.$breakpoint-laptop)
     .locations-list
         grid-template-columns: repeat(3, minmax(0, 1fr))
