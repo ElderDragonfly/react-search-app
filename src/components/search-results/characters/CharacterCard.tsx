@@ -10,8 +10,13 @@ type CharacterCardProps = {
 class CharacterCard extends Component<CharacterCardProps> {
   render(): ReactNode {
     return (
-      <li className={`character-card${this.props.loading ? ' character-card--disabled' : ''}`}>
-        <button onClick={() => this.props.onSelect(this.props.character)}>
+      <li
+        className={`character-card${this.props.loading ? " character-card--disabled" : ""}`}
+      >
+        <button
+          onClick={() => this.props.onSelect(this.props.character)}
+          disabled={this.props.loading}
+        >
           <img
             className="character-card__image"
             src={this.props.character.image}

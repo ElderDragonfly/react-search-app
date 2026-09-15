@@ -254,10 +254,10 @@ export class App extends Component<object, AppState> {
     this.setState({
       loading: true,
     });
-    // В зависимости от типа поиска отсылаем нужный fetch и пытаемся записать ответ в state App`а,
+    // Отсылаем fetch и пытаемся записать ответ в state App`а,
     // если приходит ошибка обрабатываем её
-    if (this.state.searchType === "characters") {
-      try {
+    try {
+      if (this.state.searchType === "characters") {
         const data = await fetchResults(
           this.state.searchType,
           this.state.searchValue,
@@ -271,16 +271,7 @@ export class App extends Component<object, AppState> {
           },
           error: false,
         });
-      } catch (error) {
-        console.log(error);
-        this.setState({
-          error: true,
-        });
-      } finally {
-        this.setState({ loading: false });
-      }
-    } else if (this.state.searchType === "locations") {
-      try {
+      } else if (this.state.searchType === "locations") {
         const data = await fetchResults(
           this.state.searchType,
           this.state.searchValue,
@@ -290,16 +281,7 @@ export class App extends Component<object, AppState> {
           locations: { info: data.info, data: data.results },
           error: false,
         });
-      } catch (error) {
-        console.log(error);
-        this.setState({
-          error: true,
-        });
-      } finally {
-        this.setState({ loading: false });
-      }
-    } else if (this.state.searchType === "episodes") {
-      try {
+      } else if (this.state.searchType === "episodes") {
         const data = await fetchResults(
           this.state.searchType,
           this.state.searchValue,
@@ -309,14 +291,14 @@ export class App extends Component<object, AppState> {
           episodes: { info: data.info, data: data.results },
           error: false,
         });
-      } catch (error) {
-        console.log(error);
-        this.setState({
-          error: true,
-        });
-      } finally {
-        this.setState({ loading: false });
       }
+    } catch (error) {
+      console.log(error);
+      this.setState({
+        error: true,
+      });
+    } finally {
+      this.setState({ loading: false });
     }
   };
 

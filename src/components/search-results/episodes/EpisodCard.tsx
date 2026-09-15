@@ -17,6 +17,7 @@ class EpisodesCard extends Component<EpisodeCardProps> {
           className="episode-card__button"
           type="button"
           onClick={() => this.props.onSelect(episode)}
+          disabled={this.props.loading}
         >
           <div className="episode-card__content">
             <div className="episode-card__meta">

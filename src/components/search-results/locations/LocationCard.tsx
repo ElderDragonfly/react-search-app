@@ -10,8 +10,13 @@ type LocationCardProps = {
 class LocationCard extends Component<LocationCardProps> {
   render(): ReactNode {
     return (
-      <li className={`location-card${this.props.loading ? ' location-card--disabled' : ''}`}>
-        <button onClick={() => this.props.onSelect(this.props.location)}>
+      <li
+        className={`location-card${this.props.loading ? " location-card--disabled" : ""}`}
+      >
+        <button
+          onClick={() => this.props.onSelect(this.props.location)}
+          disabled={this.props.loading}
+        >
           <div className="location-card__content">
             <h2 className="location-card__name">{this.props.location.name}</h2>
 
@@ -21,9 +26,7 @@ class LocationCard extends Component<LocationCardProps> {
               {this.props.location.dimension}
             </p>
 
-            <p className="location-card__residents">
-              Residents &#9660;
-            </p>
+            <p className="location-card__residents">Residents &#9660;</p>
           </div>
         </button>
       </li>
