@@ -30,6 +30,7 @@ type AppState = {
   searchType: SearchType;
   currentPage: number;
   error: boolean;
+  loading: boolean;
 };
 
 const createInitialState = (): AppState => ({
@@ -67,11 +68,15 @@ const createInitialState = (): AppState => ({
   searchType: "characters",
   currentPage: 1,
   error: false,
+  loading: false,
 });
 
 export class App extends Component<object, AppState> {
   // Создаём поле state
   state: AppState = createInitialState();
+
+  // Следим за изменениями loading в state
+  сomponentDidUpdate() {}
 
   // Функция-колбек для поиска
   handleSearch = (searchValue: string) => {
@@ -232,6 +237,15 @@ export class App extends Component<object, AppState> {
   // выбранного типа поиска и номера страницы
   // и запись ответа в state App
   fetchSearchResults = async () => {
+    this.setState({ loading: true });
+    // Если загрузка уже идёт выходим из функции
+    if (this.state.loading === true) {
+      return;
+    }
+    // Переключаем в режим загрузки
+    this.setState({
+      loading: true,
+    });
     // В зависимости от типа поиска отсылаем нужный fetch и пытаемся записать ответ в state App`а,
     // если приходит ошибка обрабатываем её
     if (this.state.searchType === "characters") {
@@ -288,11 +302,10 @@ export class App extends Component<object, AppState> {
         this.setState({
           error: true,
         });
+      } finally {
+        this.setState({ loading: false });
       }
     }
-    // this.setState({
-    //   searchValue: "",
-    // });
   };
 
   // Колбэк для клика по эпизоду
@@ -342,9 +355,7 @@ export class App extends Component<object, AppState> {
           {this.state.searchType === "characters" &&
             this.state.error === false && (
               <CharactersList
-                charactersInfo={this.state.characters.info}
                 characters={this.state.characters.data}
-                currentPage={this.state.currentPage}
                 renderPagination={this.renderPagination}
                 onEpisodeSelect={this.handleEpisodeSelect}
                 onLocationSelect={this.handleLocationSelect}
@@ -353,9 +364,7 @@ export class App extends Component<object, AppState> {
           {this.state.searchType === "locations" &&
             this.state.error === false && (
               <LocationsList
-                locationsInfo={this.state.locations.info}
                 locationsData={this.state.locations.data}
-                currentPage={this.state.currentPage}
                 renderPagination={this.renderPagination}
                 onCharacterSelect={this.handleCharacterSelect}
               />
@@ -363,9 +372,7 @@ export class App extends Component<object, AppState> {
           {this.state.searchType === "episodes" &&
             this.state.error === false && (
               <EpisodesList
-                episodeInfo={this.state.episodes.info}
                 episodesData={this.state.episodes.data}
-                currentPage={this.state.currentPage}
                 renderPagination={this.renderPagination}
                 onCharacterSelect={this.handleCharacterSelect}
               />

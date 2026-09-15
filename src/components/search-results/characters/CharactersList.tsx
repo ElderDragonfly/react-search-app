@@ -4,9 +4,7 @@ import CharacterCard from "./CharacterCard";
 import CharacterModal from "./modal/CharacterModal";
 
 type CharactersListProps = {
-  charactersInfo: ResultsInfo;
   characters: Character[];
-  currentPage: number;
   renderPagination: () => ReactNode;
   onEpisodeSelect: (episode: Episode) => void;
   onLocationSelect: (locationId: number) => void;

@@ -4,9 +4,7 @@ import EpisodesCard from "./EpisodCard";
 import EpisodesModal from "./modal/EpisodesModal";
 
 type EpisodeListProps = {
-  episodeInfo: ResultsInfo;
   episodesData: Episode[];
-  currentPage: number;
   onCharacterSelect: (character: Character) => void;
   renderPagination: () => ReactNode;
 };

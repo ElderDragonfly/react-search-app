@@ -4,9 +4,7 @@ import LocationCard from "./LocationCard";
 import LocationModal from "./modal/LocationModal";
 
 type LocationsListProps = {
-  locationsInfo: ResultsInfo;
   locationsData: Location[];
-  currentPage: number;
   onCharacterSelect: (character: Character) => void;
   renderPagination: () => ReactNode;
 };

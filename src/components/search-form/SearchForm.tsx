@@ -33,7 +33,10 @@ class SearchForm extends Component<SearchProps, SearchState> {
   handleSubmit = (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     this.props.onSearch(this.state.query);
-    // this.setState({ query: "" });
+    // Очищаем поле ввода после отправки формы
+    this.setState({
+      query: "",
+    });
   };
 
   render(): ReactNode {
@@ -51,6 +54,8 @@ class SearchForm extends Component<SearchProps, SearchState> {
               // Placeholder меняется вместе с изменением state
               placeholder={`Search ${this.props.searchType}...`}
               onChange={this.handleChange}
+              // Для очистки после нажатия кнопки отправки
+              value = {this.state.query}
             />
             <button type="submit" className="search__button">
               Search
