@@ -1,13 +1,14 @@
 import { Component, type ReactNode } from "react";
-import type { Location, Character } from "../../types/types";
+import type { Location, Character, PaginationProps } from "../../types/types";
 import LocationCard from "./LocationCard";
 import LocationModal from "./modal/LocationModal";
+import Pagination from "../../pagination/Pagination";
 
 type LocationsListProps = {
   locationsData: Location[];
   loading: boolean;
+  paginationProps: PaginationProps;
   onCharacterSelect: (character: Character) => void;
-  renderPagination: () => ReactNode;
 };
 
 type LocationListState = {
@@ -52,7 +53,7 @@ class LocationsList extends Component<LocationsListProps, LocationListState> {
           })}
         </ul>
         <div className="search__results--pagination">
-          {this.props.renderPagination()}
+          <Pagination {...this.props.paginationProps} />
         </div>
       </>
     );

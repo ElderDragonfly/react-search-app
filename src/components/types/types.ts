@@ -53,3 +53,13 @@ export type Episode = {
   url: string;
   created: string;
 };
+
+// Типы для пагинации
+
+export type PaginationProps = {
+  type: SearchType;
+  currentPage: number;
+  pages: number;
+  loading: boolean;
+  handlePagination: (newPage: number) => void;
+};

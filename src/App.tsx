@@ -107,140 +107,6 @@ class App extends Component<object, AppState> {
       this.fetchSearchResults,
     );
   };
-  // Рендер пагинации
-  renderPagination = (): ReactNode => {
-    // Тип "characters" | "locations" | "episodes" в разделе связанным с которым будет происходить взаимодействие со state
-    const type = this.state.searchType;
-
-    const currentPage: number = this.state.currentPage;
-    const pages: number = this.state[type].info.pages;
-    return (
-      this.state[type].info.pages > 1 && (
-        <>
-          {/* Стрелка для пролистывания пагинации к началу */}
-          <button
-            className="pagination__button"
-            disabled={currentPage === 1 || this.state.loading}
-            onClick={() => {
-              if (currentPage - 1 >= 1) {
-                this.handlePagination(this.state.currentPage - 1);
-              }
-            }}
-          >
-            &lt;
-          </button>
-          {/* Если страница не первая, покажет показвается пагинация на 1ю страницу */}
-          {currentPage > 1 &&
-            currentPage - 1 !== 1 &&
-            currentPage - 2 !== 1 && (
-              <>
-                {" "}
-                <button
-                  className="pagination__button"
-                  onClick={() => {
-                    this.handlePagination(1);
-                  }}
-                  disabled={this.state.loading}
-                >
-                  1
-                </button>
-                {/* // Точки при непоказанных страницах пагинации */}
-                {currentPage - 2 > 2 && <span>...</span>}
-              </>
-            )}
-          {/* Если есть предыдущая страница отобразит и её */}
-          {currentPage - 2 >= 1 && (
-            <button
-              className="pagination__button"
-              onClick={() => {
-                this.handlePagination(currentPage - 2);
-              }}
-              disabled={this.state.loading}
-            >
-              {this.state.currentPage - 2}
-            </button>
-          )}
-          {/* Если есть ещё предыдущая страница отобразит и её */}
-          {currentPage - 1 >= 1 && (
-            <button
-              className="pagination__button"
-              onClick={() => {
-                this.handlePagination(currentPage - 1);
-              }}
-              disabled={this.state.loading}
-            >
-              {this.state.currentPage - 1}
-            </button>
-          )}
-          {/* Если есть персонажи, отображает номер текущей страницы */}
-          <button
-            className="pagination__button pagination__button--active"
-            disabled
-          >
-            {this.state.currentPage}
-          </button>
-          {/* Если есть следующая страница отобразит и её */}
-          {currentPage + 1 <= pages && (
-            <button
-              className="pagination__button"
-              onClick={() => {
-                this.handlePagination(currentPage + 1);
-              }}
-              disabled={this.state.loading}
-            >
-              {this.state.currentPage + 1}
-            </button>
-          )}
-          {/* Если есть ещё страница отобразит и её */}
-          {currentPage + 2 <= pages && (
-            <>
-              <button
-                className="pagination__button"
-                onClick={() => {
-                  this.handlePagination(currentPage + 2);
-                }}
-                disabled={this.state.loading}
-              >
-                {this.state.currentPage + 2}
-              </button>
-              {/* // Точки при непоказанных страницах пагинации */}
-              {currentPage + 2 < pages - 1 && <span>...</span>}
-            </>
-          )}
-          {/* Если страница не последняя,
-          покажет показвается пагинация на последнюю страницу */}
-          {currentPage < pages &&
-            currentPage + 1 !== pages &&
-            currentPage + 2 !== pages && (
-              <>
-                {" "}
-                <button
-                  className="pagination__button"
-                  onClick={() => {
-                    this.handlePagination(this.state[type].info.pages);
-                  }}
-                  disabled={this.state.loading}
-                >
-                  {this.state[type].info.pages}
-                </button>
-              </>
-            )}
-          {/* Стрелка для пролистывания пагинации к концу */}
-          <button
-            className={"pagination__button"}
-            disabled={currentPage === pages || this.state.loading}
-            onClick={() => {
-              if (currentPage + 1 <= pages) {
-                this.handlePagination(this.state.currentPage + 1);
-              }
-            }}
-          >
-            &gt;
-          </button>
-        </>
-      )
-    );
-  };
 
   // Запрос в зависимости от введённого value,
   // выбранного типа поиска и номера страницы
@@ -337,6 +203,13 @@ class App extends Component<object, AppState> {
   };
 
   render(): ReactNode {
+    const paginationProps = {
+      type: this.state.searchType,
+      currentPage: this.state.currentPage,
+      pages: this.state[this.state.searchType].info.pages,
+      loading: this.state.loading,
+      handlePagination: this.handlePagination,
+    };
     return (
       <>
         <Header />
@@ -352,7 +225,7 @@ class App extends Component<object, AppState> {
               <CharactersList
                 characters={this.state.characters.data}
                 loading={this.state.loading}
-                renderPagination={this.renderPagination}
+                paginationProps={paginationProps}
                 onEpisodeSelect={this.handleEpisodeSelect}
                 onLocationSelect={this.handleLocationSelect}
               />
@@ -362,7 +235,7 @@ class App extends Component<object, AppState> {
               <LocationsList
                 locationsData={this.state.locations.data}
                 loading={this.state.loading}
-                renderPagination={this.renderPagination}
+                paginationProps={paginationProps}
                 onCharacterSelect={this.handleCharacterSelect}
               />
             )}
@@ -371,7 +244,7 @@ class App extends Component<object, AppState> {
               <EpisodesList
                 episodesData={this.state.episodes.data}
                 loading={this.state.loading}
-                renderPagination={this.renderPagination}
+                paginationProps={paginationProps}
                 onCharacterSelect={this.handleCharacterSelect}
               />
             )}

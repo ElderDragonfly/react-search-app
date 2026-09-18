@@ -1,12 +1,13 @@
 import { Component, type ReactNode } from "react";
-import type { Character, Episode } from "../../types/types";
+import type { Character, PaginationProps, Episode } from "../../types/types";
 import CharacterCard from "./CharacterCard";
 import CharacterModal from "./modal/CharacterModal";
 import Pagination from "../../pagination/Pagination";
+
 type CharactersListProps = {
   characters: Character[];
   loading: boolean;
-  renderPagination: () => ReactNode;
+  paginationProps: PaginationProps;
   onEpisodeSelect: (episode: Episode) => void;
   onLocationSelect: (locationId: number) => void;
 };
@@ -57,10 +58,7 @@ class CharactersList extends Component<
           })}
         </ul>
         <div className="search__results--pagination">
-          {this.props.renderPagination()}
-          <Pagination
-          type=""
-          />
+          <Pagination {...this.props.paginationProps} />
         </div>
       </>
     );

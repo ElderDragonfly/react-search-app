@@ -12,7 +12,7 @@ type PaginationProps = {
 class Pagination extends Component<PaginationProps> {
   render(): ReactNode {
     return (
-      this.state[this.props.type].info.pages > 1 && (
+      this.props.pages > 1 && (
         <>
           {/* Стрелка для пролистывания пагинации к началу */}
           <button

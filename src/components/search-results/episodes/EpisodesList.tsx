@@ -1,13 +1,14 @@
 import { Component, type ReactNode } from "react";
-import type { Episode, Character } from "../../types/types";
+import type { Episode, Character, PaginationProps } from "../../types/types";
 import EpisodeCard from "./EpisodeCard";
 import EpisodesModal from "./modal/EpisodesModal";
+import Pagination from "../../pagination/Pagination";
 
 type EpisodeListProps = {
   episodesData: Episode[];
   loading: boolean;
+  paginationProps: PaginationProps;
   onCharacterSelect: (character: Character) => void;
-  renderPagination: () => ReactNode;
 };
 
 type EpisodeListState = {
@@ -52,7 +53,7 @@ class EpisodesList extends Component<EpisodeListProps, EpisodeListState> {
           })}
         </ul>
         <div className="search__results--pagination">
-          {this.props.renderPagination()}
+          <Pagination {...this.props.paginationProps} />
         </div>
       </>
     );
