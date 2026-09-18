@@ -2,7 +2,7 @@ import { Component, type ReactNode } from "react";
 import type { Character, Episode } from "../../types/types";
 import CharacterCard from "./CharacterCard";
 import CharacterModal from "./modal/CharacterModal";
-
+import Pagination from "../../pagination/Pagination";
 type CharactersListProps = {
   characters: Character[];
   loading: boolean;
@@ -24,7 +24,7 @@ class CharactersList extends Component<
     selectedCharacter: null,
   };
   // Callback для выбора карточки по клину на ней
-  handleSelecteCharacterCard = (character: Character) => {
+  handleSelectCharacterCard = (character: Character) => {
     this.setState({ selectedCharacter: character });
   };
   // Закрытие модального окна
@@ -50,7 +50,7 @@ class CharactersList extends Component<
               <CharacterCard
                 key={character.id}
                 loading={this.props.loading}
-                onSelect={this.handleSelecteCharacterCard}
+                onSelect={this.handleSelectCharacterCard}
                 character={character}
               />
             );
@@ -58,6 +58,9 @@ class CharactersList extends Component<
         </ul>
         <div className="search__results--pagination">
           {this.props.renderPagination()}
+          <Pagination
+          type=""
+          />
         </div>
       </>
     );

@@ -44,7 +44,7 @@ class LocationModal extends Component<LocationModalProps, LocationModalState> {
     }
   };
   // Подготавливаем информацию из ссылок на персонажей для рендера
-  rederCharactersLinks = (characters: Character[]) => {
+  renderCharactersLinks = (characters: Character[]) => {
     return (
       <ul className="location-modal__characters">
         {characters.map((character) => {
@@ -86,7 +86,7 @@ class LocationModal extends Component<LocationModalProps, LocationModalState> {
             </p>
             <div className="location-modal__residents">
               <span className="location-modal__label">Characters:</span>
-              {this.rederCharactersLinks(this.state.characters)}
+              {this.renderCharactersLinks(this.state.characters)}
             </div>
           </div>
         </div>

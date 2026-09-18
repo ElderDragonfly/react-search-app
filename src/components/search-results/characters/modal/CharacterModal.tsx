@@ -10,7 +10,7 @@ type CharacterModalProps = {
 };
 
 type CharacterModalState = {
-  episode: Episode[];
+  episodes: Episode[];
 };
 
 class CharacterModal extends Component<
@@ -18,7 +18,7 @@ class CharacterModal extends Component<
   CharacterModalState
 > {
   state: Readonly<CharacterModalState> = {
-    episode: [],
+    episodes: [],
   };
 
   // После первого рендера модального окна загружаем эпизоды персонажа
@@ -36,7 +36,7 @@ class CharacterModal extends Component<
       const episodesData = await fetchResults("episodes", episodesIds);
 
       this.setState({
-        episode: Array.isArray(episodesData.results) ? episodesData.results : [episodesData.results],
+        episodes: Array.isArray(episodesData.results) ? episodesData.results : [episodesData.results],
       });
     } catch (error) {
       console.error(error);
@@ -132,7 +132,7 @@ class CharacterModal extends Component<
 
             <div className="character-modal__detail character-modal__detail--episodes">
               <span className="character-modal__label">Episodes:</span>
-              {this.renderEpisodeLinks(this.state.episode)}
+              {this.renderEpisodeLinks(this.state.episodes)}
             </div>
           </div>
         </div>

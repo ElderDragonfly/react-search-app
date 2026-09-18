@@ -7,7 +7,7 @@ type EpisodeCardProps = {
   onSelect: (episode: Episode) => void;
 };
 
-class EpisodesCard extends Component<EpisodeCardProps> {
+class EpisodeCard extends Component<EpisodeCardProps> {
   render(): ReactNode {
     const { episode } = this.props;
 
@@ -41,4 +41,4 @@ class EpisodesCard extends Component<EpisodeCardProps> {
   }
 }
 
-export default EpisodesCard;
+export default EpisodeCard;

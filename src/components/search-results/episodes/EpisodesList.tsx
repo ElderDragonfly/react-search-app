@@ -1,6 +1,6 @@
 import { Component, type ReactNode } from "react";
 import type { Episode, Character } from "../../types/types";
-import EpisodesCard from "./EpisodCard";
+import EpisodeCard from "./EpisodeCard";
 import EpisodesModal from "./modal/EpisodesModal";
 
 type EpisodeListProps = {
@@ -42,7 +42,7 @@ class EpisodesList extends Component<EpisodeListProps, EpisodeListState> {
         <ul className="search__results--episode episode-list">
           {this.props.episodesData.map((episode) => {
             return (
-              <EpisodesCard
+              <EpisodeCard
                 key={episode.id}
                 loading={this.props.loading}
                 onSelect={this.handleSelecteEpisodeCard}

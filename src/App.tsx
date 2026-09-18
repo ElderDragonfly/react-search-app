@@ -71,7 +71,7 @@ const createInitialState = (): AppState => ({
   loading: false,
 });
 
-export class App extends Component<object, AppState> {
+class App extends Component<object, AppState> {
   // Создаём поле state
   state: AppState = createInitialState();
 
