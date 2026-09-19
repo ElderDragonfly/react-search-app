@@ -12,6 +12,7 @@ import SearchForm from "./components/search-form/SearchForm";
 import CharactersList from "./components/search-results/characters/CharactersList";
 import LocationsList from "./components/search-results/locations/LocationsList";
 import EpisodesList from "./components/search-results/episodes/EpisodesList";
+import { ApiError } from "./api/errors/ApiError";
 
 type AppState = {
   characters: {
@@ -29,7 +30,10 @@ type AppState = {
   searchValue: string;
   searchType: SearchType;
   currentPage: number;
-  error: boolean;
+  error: {
+    status: number | null;
+    message: string;
+  } | null;
   loading: boolean;
 };
 
@@ -67,7 +71,7 @@ const createInitialState = (): AppState => ({
   searchValue: "",
   searchType: "characters",
   currentPage: 1,
-  error: false,
+  error: null,
   loading: false,
 });
 
@@ -116,9 +120,10 @@ class App extends Component<object, AppState> {
     if (this.state.loading === true) {
       return;
     }
-    // Переключаем в режим загрузки
+    // Переключаем в режим загрузки и сбрасываем старые ошибки
     this.setState({
       loading: true,
+      error: null,
     });
     // Отсылаем fetch и пытаемся записать ответ в state App`а,
     // если приходит ошибка обрабатываем её
@@ -135,7 +140,7 @@ class App extends Component<object, AppState> {
             info: data.info,
             data: data.results,
           },
-          error: false,
+          error: null,
         });
       } else if (this.state.searchType === "locations") {
         const data = await fetchResults(
@@ -145,7 +150,7 @@ class App extends Component<object, AppState> {
         );
         this.setState({
           locations: { info: data.info, data: data.results },
-          error: false,
+          error: null,
         });
       } else if (this.state.searchType === "episodes") {
         const data = await fetchResults(
@@ -155,14 +160,60 @@ class App extends Component<object, AppState> {
         );
         this.setState({
           episodes: { info: data.info, data: data.results },
-          error: false,
+          error: null,
         });
       }
-    } catch (error) {
-      console.log(error);
-      this.setState({
-        error: true,
-      });
+    } catch (error: unknown) {
+      // Ветка если сервер ответил но responce не ok
+      if (error instanceof ApiError) {
+        if (error.status === 404) {
+          this.setState({
+            error: {
+              status: error.status,
+              message: "Sorry, we couldn’t find anything :(",
+            },
+          });
+        } else if (error.status >= 400 && error.status <= 499) {
+          this.setState({
+            error: {
+              status: error.status,
+              message: "We couldn’t process your request. Please try again.",
+            },
+          });
+        } else if (error.status >= 500) {
+          this.setState({
+            error: {
+              status: error.status,
+              message:
+                "The service encountered a problem. Please try again later.",
+            },
+          });
+        }
+      } else if (error instanceof Error) {
+        if (error.message === "Invalid query format") {
+          this.setState({
+            error: {
+              status: null,
+              message: "Please enter a name, one ID, or several IDs.",
+            },
+          });
+        } else {
+          this.setState({
+            error: {
+              status: null,
+              message:
+                "We couldn’t complete your request. Please try again later.",
+            },
+          });
+        }
+      } else {
+        this.setState({
+          error: {
+            status: null,
+            message: "Something went wrong. Please try again later.",
+          },
+        });
+      }
     } finally {
       this.setState({ loading: false });
     }
@@ -221,7 +272,7 @@ class App extends Component<object, AppState> {
             onSearch={this.handleSearch}
           />
           {this.state.searchType === "characters" &&
-            this.state.error === false && (
+            this.state.error === null && (
               <CharactersList
                 characters={this.state.characters.data}
                 loading={this.state.loading}
@@ -231,7 +282,7 @@ class App extends Component<object, AppState> {
               />
             )}
           {this.state.searchType === "locations" &&
-            this.state.error === false && (
+            this.state.error === null && (
               <LocationsList
                 locationsData={this.state.locations.data}
                 loading={this.state.loading}
@@ -240,7 +291,7 @@ class App extends Component<object, AppState> {
               />
             )}
           {this.state.searchType === "episodes" &&
-            this.state.error === false && (
+            this.state.error === null && (
               <EpisodesList
                 episodesData={this.state.episodes.data}
                 loading={this.state.loading}
@@ -248,9 +299,9 @@ class App extends Component<object, AppState> {
                 onCharacterSelect={this.handleCharacterSelect}
               />
             )}
-          {this.state.error === true && (
+          {this.state.error && (
             <>
-              <p className="error__not-found">Sorry, can`t found it :&#40;</p>
+              <p className="error__message">{this.state.error.message}</p>
             </>
           )}
         </main>
