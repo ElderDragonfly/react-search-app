@@ -43,9 +43,7 @@ class EpisodesModal extends Component<EpisodeModalProps, EpisodeModalState> {
       const characterData = await fetchResults("characters", characterIds);
       // Записываем данные о персонажах в state locationModal
       this.setState({
-        characters: Array.isArray(characterData.results)
-          ? characterData.results
-          : [characterData.results],
+        characters: characterData.results,
       });
     } catch (error) {
       const errorInfo = handleError(error);

@@ -68,5 +68,5 @@ export type PaginationProps = {
 
 export type ErrorInfo = {
   status: number | null;
-  message: string | null;
+  message: string;
 } | null;

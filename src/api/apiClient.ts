@@ -49,20 +49,17 @@ async function fetchResults<Type extends keyof SearchTypeMap>(
   // Приводим searchType к тому, чтобы использовать в URL запроса
   const searchTypePath = searchType.slice(0, -1);
 
-  //
-  if (!filters) {
-    filters = createFiltersFromValue(query);
-  }
+  // Используем переданные фильтры или формируем их из поискового запроса
+    const activeFilters = filters ?? createFiltersFromValue(query);
 
   // Проверяем поле ids, и если оно есть запрос по id
-  if(filters.ids !== undefined) {
-    const ids = Array.isArray(filters.ids) ? filters.ids : [filters.ids];
+  if(activeFilters.ids !== undefined) {
+    const ids = Array.isArray(activeFilters.ids) ? activeFilters.ids : [activeFilters.ids];
     // Проверка если массив вдруг пустой
     if (ids.length === 0) {
       throw new Error("IDs list cannot be empty");
     }
     const idsPath = ids.join(",");
-    try {
     const response = await request(`/${searchTypePath}/${idsPath}`)
     const results = Array.isArray(response) ? response : [response];
       return {
@@ -74,26 +71,17 @@ async function fetchResults<Type extends keyof SearchTypeMap>(
         },
         results: results,
       };
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
   }
   const params = new URLSearchParams();
   // Разбиваем объект на массив массивов ключ-значение в каждом и записываем в params
-  Object.entries(filters).forEach(([key, value]) => {
+  Object.entries(activeFilters).forEach(([key, value]) => {
     if (value !== undefined) {
       params.set(key, String(value));
     }}
   )
   params.set("page", String(page));
-  try {
     const response = await request(`/${searchTypePath}?${params.toString()}`);
     return response;
-  } catch (error) {
-      console.log(error);
-      throw error;
-    }
   }
 
   function createFiltersFromValue(query: string | number | number[],): FilterType {
