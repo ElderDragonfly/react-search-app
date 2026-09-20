@@ -1,6 +1,7 @@
 import { Component, type ReactNode } from "react";
-import type { Character, Location } from "../../../types/types";
+import type { Character, Location, ErrorInfo } from "../../../types/types";
 import fetchResults from "../../../../api/apiClient";
+import { handleError } from "../../../../api/errors/ApiError";
 
 type LocationModalProps = {
   location: Location;
@@ -10,11 +11,15 @@ type LocationModalProps = {
 
 type LocationModalState = {
   characters: Character[];
+  error: ErrorInfo;
+  loading: boolean;
 };
 
 class LocationModal extends Component<LocationModalProps, LocationModalState> {
   state: Readonly<LocationModalState> = {
     characters: [],
+    error: null,
+    loading: true,
   };
   // После первого рендера модального окна загружаем персонажей локации
   componentDidMount(): void {
@@ -29,7 +34,10 @@ class LocationModal extends Component<LocationModalProps, LocationModalState> {
       return Number(episodeUrl.split("/").at(-1));
     });
     // Если персонажей на локации нет запрос не отправляем
-    if (characterIds.length === 0) return;
+    if (characterIds.length === 0) {
+      this.setState({ loading: false });
+      return;
+    }
     try {
       // Отправляем запрос с id персонажей
       const characterData = await fetchResults("characters", characterIds);
@@ -40,7 +48,10 @@ class LocationModal extends Component<LocationModalProps, LocationModalState> {
           : [characterData.results],
       });
     } catch (error) {
-      console.error(error);
+      const errorInfo = handleError(error);
+      this.setState({ error: errorInfo });
+    } finally {
+      this.setState({ loading: false });
     }
   };
   // Подготавливаем информацию из ссылок на персонажей для рендера
@@ -86,7 +97,25 @@ class LocationModal extends Component<LocationModalProps, LocationModalState> {
             </p>
             <div className="location-modal__residents">
               <span className="location-modal__label">Characters:</span>
-              {this.renderCharactersLinks(this.state.characters)}
+              {this.state.loading && (
+                <div
+                  className="modal__message modal__message--loading"
+                  role="status"
+                >
+                  Loading...
+                </div>
+              )}
+              {this.state.loading === false &&
+                this.state.error === null &&
+                this.renderCharactersLinks(this.state.characters)}
+              {this.state.error && (
+                <div
+                  className="modal__message modal__message--error"
+                  role="alert"
+                >
+                  {this.state.error.message}
+                </div>
+              )}
             </div>
           </div>
         </div>

@@ -63,3 +63,10 @@ export type PaginationProps = {
   loading: boolean;
   handlePagination: (newPage: number) => void;
 };
+
+// Типы для ошибок
+
+export type ErrorInfo = {
+  status: number | null;
+  message: string | null;
+} | null;

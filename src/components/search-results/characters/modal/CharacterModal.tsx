@@ -1,6 +1,7 @@
 import { Component, type ReactNode } from "react";
-import type { Character, Episode } from "../../../types/types";
+import type { Character, Episode, ErrorInfo } from "../../../types/types";
 import fetchResults from "../../../../api/apiClient";
+import { handleError } from "../../../../api/errors/ApiError";
 
 type CharacterModalProps = {
   character: Character;
@@ -11,6 +12,8 @@ type CharacterModalProps = {
 
 type CharacterModalState = {
   episodes: Episode[];
+  error: ErrorInfo;
+  loading: boolean;
 };
 
 class CharacterModal extends Component<
@@ -19,6 +22,8 @@ class CharacterModal extends Component<
 > {
   state: Readonly<CharacterModalState> = {
     episodes: [],
+    loading: true,
+    error: null,
   };
 
   // После первого рендера модального окна загружаем эпизоды персонажа
@@ -36,10 +41,13 @@ class CharacterModal extends Component<
       const episodesData = await fetchResults("episodes", episodesIds);
 
       this.setState({
-        episodes: Array.isArray(episodesData.results) ? episodesData.results : [episodesData.results],
+        episodes: episodesData.results,
       });
     } catch (error) {
-      console.error(error);
+      const errorInfo = handleError(error);
+      this.setState({ error: errorInfo });
+    } finally {
+      this.setState({ loading: false });
     }
   };
 
@@ -132,7 +140,25 @@ class CharacterModal extends Component<
 
             <div className="character-modal__detail character-modal__detail--episodes">
               <span className="character-modal__label">Episodes:</span>
-              {this.renderEpisodeLinks(this.state.episodes)}
+              {this.state.loading && (
+                <div
+                  className="modal__message modal__message--loading"
+                  role="status"
+                >
+                  Loading...
+                </div>
+              )}
+              {this.state.loading === false &&
+                this.state.error === null &&
+                this.renderEpisodeLinks(this.state.episodes)}
+              {this.state.error && (
+                <div
+                  className="modal__message modal__message--error"
+                  role="alert"
+                >
+                  {this.state.error.message}
+                </div>
+              )}
             </div>
           </div>
         </div>

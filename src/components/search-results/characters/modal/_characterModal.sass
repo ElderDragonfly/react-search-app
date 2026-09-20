@@ -1,17 +1,5 @@
 @use '../../../../styles/_variables' as vars
 
-.modal
-    position: fixed
-    inset: 0
-    z-index: 10
-    display: flex
-    justify-content: center
-    align-items: center
-    padding: 32px
-    background-color: rgba(vars.$font-color, .72)
-    backdrop-filter: blur(6px)
-    animation: modal-fade-in .2s ease-out
-
 .character-modal
     position: relative
     display: grid
@@ -184,15 +172,6 @@
         &:focus-visible
             outline: 3px solid rgba(vars.$portal-color, .4)
             outline-offset: 2px
-
-@keyframes modal-fade-in
-    from
-        opacity: 0
-
-@keyframes modal-scale-in
-    from
-        opacity: 0
-        transform: scale(.94)
 
 @media (max-width: vars.$breakpoint-tablet)
     .modal

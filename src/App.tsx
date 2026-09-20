@@ -5,6 +5,7 @@ import type {
   SearchType,
   Location,
   Episode,
+  ErrorInfo,
 } from "./components/types/types";
 import fetchResults from "./api/apiClient";
 import Header from "./components/header/Header";
@@ -12,7 +13,7 @@ import SearchForm from "./components/search-form/SearchForm";
 import CharactersList from "./components/search-results/characters/CharactersList";
 import LocationsList from "./components/search-results/locations/LocationsList";
 import EpisodesList from "./components/search-results/episodes/EpisodesList";
-import { ApiError } from "./api/errors/ApiError";
+import { handleError } from "./api/errors/ApiError";
 
 type AppState = {
   characters: {
@@ -30,10 +31,7 @@ type AppState = {
   searchValue: string;
   searchType: SearchType;
   currentPage: number;
-  error: {
-    status: number | null;
-    message: string;
-  } | null;
+  error: ErrorInfo;
   loading: boolean;
 };
 
@@ -164,56 +162,8 @@ class App extends Component<object, AppState> {
         });
       }
     } catch (error: unknown) {
-      // Ветка если сервер ответил но responce не ok
-      if (error instanceof ApiError) {
-        if (error.status === 404) {
-          this.setState({
-            error: {
-              status: error.status,
-              message: "Sorry, we couldn’t find anything :(",
-            },
-          });
-        } else if (error.status >= 400 && error.status <= 499) {
-          this.setState({
-            error: {
-              status: error.status,
-              message: "We couldn’t process your request. Please try again.",
-            },
-          });
-        } else if (error.status >= 500) {
-          this.setState({
-            error: {
-              status: error.status,
-              message:
-                "The service encountered a problem. Please try again later.",
-            },
-          });
-        }
-      } else if (error instanceof Error) {
-        if (error.message === "Invalid query format") {
-          this.setState({
-            error: {
-              status: null,
-              message: "Please enter a name, one ID, or several IDs.",
-            },
-          });
-        } else {
-          this.setState({
-            error: {
-              status: null,
-              message:
-                "We couldn’t complete your request. Please try again later.",
-            },
-          });
-        }
-      } else {
-        this.setState({
-          error: {
-            status: null,
-            message: "Something went wrong. Please try again later.",
-          },
-        });
-      }
+      const errorInfo = handleError(error);
+      this.setState({ error: errorInfo });
     } finally {
       this.setState({ loading: false });
     }
