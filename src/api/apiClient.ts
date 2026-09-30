@@ -10,6 +10,7 @@ const BASE_URL = "https://rickandmortyapi.com/api";
 
 function request(path: string) {
   return fetch(BASE_URL + path).then((response) => {
+    console.log(response);
     if (response.ok) {
       return response.json();
     } else {
