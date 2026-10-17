@@ -35,7 +35,7 @@ type AppState = {
   loading: boolean;
 };
 
-const createInitialState = (): AppState => ({
+const defoultState: AppState = {
   characters: {
     info: {
       count: 0,
@@ -71,11 +71,30 @@ const createInitialState = (): AppState => ({
   currentPage: 1,
   error: null,
   loading: false,
-});
+};
 
 class App extends Component<object, AppState> {
   // Создаём поле state
-  state: AppState = createInitialState();
+  state: AppState = (() => {
+    const savedType = localStorage.getItem("searchType");
+    const savedQuery = localStorage.getItem("searchQuery");
+    const initialState = structuredClone(defoultState);
+    if (savedType && savedQuery) {
+      initialState.searchType = JSON.parse(savedType);
+      initialState.searchValue = JSON.parse(savedQuery);
+      return initialState;
+    }
+    return initialState;
+  })();
+
+  // При создании App отправляем запрос с записанными в localStorage данными, если они есть
+  async componentDidMount(): Promise<void> {
+    const savedType = localStorage.getItem("searchType");
+    const savedQuery = localStorage.getItem("searchQuery");
+    if (savedType && savedQuery) {
+      await this.fetchSearchResults();
+    }
+  }
 
   // Функция-колбек для поиска
   handleSearch = (searchValue: string) => {
@@ -90,13 +109,16 @@ class App extends Component<object, AppState> {
       // Вызываем функцию запроса с обновлёнными параметрами
       this.fetchSearchResults,
     );
+    // Записываем данные в localStorage
+    localStorage.setItem("searchType", JSON.stringify(this.state.searchType));
+    localStorage.setItem("searchQuery", JSON.stringify(searchValue));
   };
 
   // Сбрасываем state и меняем тип поиска
   handleSearchType = (searchType: SearchType) => {
     // Не меняем state если загрузка активна
     if (this.state.loading) return;
-    this.setState({ ...createInitialState(), searchType });
+    this.setState({ ...defoultState, searchType });
   };
 
   // Управление пагинацией
@@ -216,6 +238,7 @@ class App extends Component<object, AppState> {
         <Header />
         <main>
           <SearchForm
+            searchValue={this.state.searchValue}
             searchType={this.state.searchType}
             loading={this.state.loading}
             onSearchTypeChange={this.handleSearchType}

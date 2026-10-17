@@ -3,7 +3,7 @@
 
 import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { afterEach, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import App from "./App";
 
 // После каждого теста удаляем React-компоненты из DOM.
@@ -13,6 +13,64 @@ afterEach(() => {
   // Сбрасывает подмену fetch на фэйковый fakefetch
   vi.unstubAllGlobals();
 });
+// Перед каждым тестом очищаем localStorage
+beforeEach(() => {
+  localStorage.clear();
+});
+
+const charactersData = {
+  info: {
+    count: 1,
+    pages: 1,
+    next: null,
+    prev: null,
+  },
+  results: [
+    {
+      id: 2,
+      name: "Morty Smith",
+      status: "Alive",
+      species: "Human",
+      type: "",
+      gender: "Male",
+      origin: {
+        name: "Earth",
+        url: "https://rickandmortyapi.com/api/location/1",
+      },
+      location: {
+        name: "Earth",
+        url: "https://rickandmortyapi.com/api/location/20",
+      },
+      image: "https://rickandmortyapi.com/api/character/avatar/2.jpeg",
+      episode: [
+        "https://rickandmortyapi.com/api/episode/1",
+        "https://rickandmortyapi.com/api/episode/2",
+      ],
+      url: "https://rickandmortyapi.com/api/character/2",
+      created: "2017-11-04T18:50:21.651Z",
+    },
+    {
+      id: 183,
+      name: "Johnny Depp",
+      status: "Alive",
+      species: "Human",
+      type: "",
+      gender: "Male",
+      origin: {
+        name: "Earth (C-500A)",
+        url: "https://rickandmortyapi.com/api/location/23",
+      },
+      location: {
+        name: "Earth (C-500A)",
+        url: "https://rickandmortyapi.com/api/location/23",
+      },
+      image: "https://rickandmortyapi.com/api/character/avatar/183.jpeg",
+      episode: ["https://rickandmortyapi.com/api/episode/8"],
+      url: "https://rickandmortyapi.com/api/character/183",
+      created: "2017-12-29T18:51:29.693Z",
+    },
+  ],
+};
 
 it("starts in character search mode", async () => {
   // React Testing Library помещает App в DOM, созданный jsdom.
@@ -71,78 +129,6 @@ it("switches search from characters to episodes", async () => {
 });
 
 it("shows a character after searching by name", async () => {
-  const mortyInfo = {
-    id: 2,
-    name: "Morty Smith",
-    status: "Alive",
-    species: "Human",
-    type: "",
-    gender: "Male",
-    origin: {
-      name: "unknown",
-      url: "",
-    },
-    location: {
-      name: "Citadel of Ricks",
-      url: "https://rickandmortyapi.com/api/location/3",
-    },
-    image: "https://rickandmortyapi.com/api/character/avatar/2.jpeg",
-    episode: [
-      "https://rickandmortyapi.com/api/episode/1",
-      "https://rickandmortyapi.com/api/episode/2",
-      "https://rickandmortyapi.com/api/episode/3",
-      "https://rickandmortyapi.com/api/episode/4",
-      "https://rickandmortyapi.com/api/episode/5",
-      "https://rickandmortyapi.com/api/episode/6",
-      "https://rickandmortyapi.com/api/episode/7",
-      "https://rickandmortyapi.com/api/episode/8",
-      "https://rickandmortyapi.com/api/episode/9",
-      "https://rickandmortyapi.com/api/episode/10",
-      "https://rickandmortyapi.com/api/episode/11",
-      "https://rickandmortyapi.com/api/episode/12",
-      "https://rickandmortyapi.com/api/episode/13",
-      "https://rickandmortyapi.com/api/episode/14",
-      "https://rickandmortyapi.com/api/episode/15",
-      "https://rickandmortyapi.com/api/episode/16",
-      "https://rickandmortyapi.com/api/episode/17",
-      "https://rickandmortyapi.com/api/episode/18",
-      "https://rickandmortyapi.com/api/episode/19",
-      "https://rickandmortyapi.com/api/episode/20",
-      "https://rickandmortyapi.com/api/episode/21",
-      "https://rickandmortyapi.com/api/episode/22",
-      "https://rickandmortyapi.com/api/episode/23",
-      "https://rickandmortyapi.com/api/episode/24",
-      "https://rickandmortyapi.com/api/episode/25",
-      "https://rickandmortyapi.com/api/episode/26",
-      "https://rickandmortyapi.com/api/episode/27",
-      "https://rickandmortyapi.com/api/episode/28",
-      "https://rickandmortyapi.com/api/episode/29",
-      "https://rickandmortyapi.com/api/episode/30",
-      "https://rickandmortyapi.com/api/episode/31",
-      "https://rickandmortyapi.com/api/episode/32",
-      "https://rickandmortyapi.com/api/episode/33",
-      "https://rickandmortyapi.com/api/episode/34",
-      "https://rickandmortyapi.com/api/episode/35",
-      "https://rickandmortyapi.com/api/episode/36",
-      "https://rickandmortyapi.com/api/episode/37",
-      "https://rickandmortyapi.com/api/episode/38",
-      "https://rickandmortyapi.com/api/episode/39",
-      "https://rickandmortyapi.com/api/episode/40",
-      "https://rickandmortyapi.com/api/episode/41",
-      "https://rickandmortyapi.com/api/episode/42",
-      "https://rickandmortyapi.com/api/episode/43",
-      "https://rickandmortyapi.com/api/episode/44",
-      "https://rickandmortyapi.com/api/episode/45",
-      "https://rickandmortyapi.com/api/episode/46",
-      "https://rickandmortyapi.com/api/episode/47",
-      "https://rickandmortyapi.com/api/episode/48",
-      "https://rickandmortyapi.com/api/episode/49",
-      "https://rickandmortyapi.com/api/episode/50",
-      "https://rickandmortyapi.com/api/episode/51",
-    ],
-    url: "https://rickandmortyapi.com/api/character/2",
-    created: "2017-11-04T18:50:21.651Z",
-  };
   // Создаём асинхронную функцию фэйкового запроса
   const fakeFetch = vi.fn(async () => {
     return {
@@ -155,7 +141,7 @@ it("shows a character after searching by name", async () => {
             next: null,
             prev: null,
           },
-          results: [mortyInfo],
+          results: [charactersData.results[0]],
         };
       },
     };
@@ -245,4 +231,95 @@ it("show message then wrong symbols is searching", async () => {
 
   // Неверный ввод был отклонён до сетевого запроса.
   expect(fakeFetch).not.toHaveBeenCalled();
+});
+
+it("set searchType and searchQuery in localStorage then click search button", async () => {
+  // Создаём асинхронную функцию фэйкового запроса
+  const fakeFetch = vi.fn(async () => {
+    return {
+      ok: true,
+      json: async () => {
+        return {
+          info: {
+            count: 1,
+            pages: 1,
+            next: null,
+            prev: null,
+          },
+          results: [charactersData.results[0]],
+        };
+      },
+    };
+  });
+  const pageUrl =
+    "https://rickandmortyapi.com/api/character?name=Morty+Smith&page=1";
+
+  // Заменяем настоящий fetch вторым фэйковым
+  vi.stubGlobal("fetch", fakeFetch);
+
+  // Создаём App
+  render(<App />);
+  // user-event создаёт объект, который умеет выполнять действия пользователя.
+  const user = userEvent.setup();
+  // React Testing Library находит поле ввода
+  const input = screen.getByRole("searchbox");
+  // Имитируем ввод текста в найденное поле ввода
+  await user.type(input, "Morty Smith");
+  // React Testing Library находит кнопку search
+  const searchButton = screen.getByRole("button", { name: "Search" });
+  // Жмём на кнопку search
+  await user.click(searchButton);
+
+  // Ожидаем что записанное в localStorage равно 'characters' и "Morty Smith"
+  const searchTypeLocalStorage = JSON.parse(localStorage.getItem("searchType"));
+  const searchQueryLocalStorage = JSON.parse(
+    localStorage.getItem("searchQuery"),
+  );
+  expect(searchTypeLocalStorage).toBe("characters");
+  expect(searchQueryLocalStorage).toBe("Morty Smith");
+
+  // Ожидаем что ещё раз заменённый заменённый fetch вызовется только один раз
+  expect(fetch).toHaveBeenCalledTimes(1);
+  // Смотрим что request отправил в fetch в зависимости от searchType
+  expect(fetch).toHaveBeenCalledWith(pageUrl);
+});
+
+it("restore search from localStorage", async () => {
+  // Создаём асинхронную функцию фэйкового запроса
+  const fakeFetch = vi.fn(async () => {
+    return {
+      ok: true,
+      json: async () => {
+        return {
+          info: {
+            count: 1,
+            pages: 1,
+            next: null,
+            prev: null,
+          },
+          results: [charactersData.results[0]],
+        };
+      },
+    };
+  });
+  const pageUrl =
+    "https://rickandmortyapi.com/api/character?name=Morty+Smith&page=1";
+
+  // Заменяем настоящий fetch вторым фэйковым
+  vi.stubGlobal("fetch", fakeFetch);
+
+  // Заполняем localStorage для теста
+  localStorage.setItem("searchType", JSON.stringify("characters"));
+  localStorage.setItem("searchQuery", JSON.stringify("Morty Smith"));
+  // Создаём App
+  render(<App />);
+  // React Testing Library ждёт заголовок карточки после ответа API и обновления App
+  // И если не находит тест падает с ошибкой
+  await screen.findByRole("heading", {
+    name: "Morty Smith",
+  });
+  // Ожидаем что ещё раз заменённый заменённый fetch вызовется только один раз
+  expect(fetch).toHaveBeenCalledTimes(1);
+  // Смотрим что request отправил в fetch в зависимости от searchType
+  expect(fetch).toHaveBeenCalledWith(pageUrl);
 });

@@ -7,6 +7,7 @@ import {
 import type { SearchType } from "../types/types";
 
 type SearchProps = {
+  searchValue: string;
   searchType: SearchType;
   loading: boolean;
   onSearchTypeChange: (searchType: SearchType) => void;
@@ -67,6 +68,14 @@ class SearchForm extends Component<SearchProps, SearchState> {
             </button>
           </div>
 
+          <div className="search__query-summary">
+            Results for{" "}
+            <span className="search__query-value">
+              "{this.props.searchValue}"
+            </span>{" "}
+            in {this.props.searchType}
+          </div>
+
           <fieldset
             className="search__type-wrapper"
             disabled={this.props.loading}
@@ -77,7 +86,10 @@ class SearchForm extends Component<SearchProps, SearchState> {
                 name="searchType"
                 value="character"
                 className="search__type"
-                onChange={() => this.props.onSearchTypeChange("characters")}
+                onChange={() => {
+                  (this.props.onSearchTypeChange("characters"),
+                    this.setState({ query: "" }));
+                }}
                 checked={this.props.searchType === "characters"}
               />
               Characters
@@ -88,7 +100,10 @@ class SearchForm extends Component<SearchProps, SearchState> {
                 name="searchType"
                 value="location"
                 className="search__type"
-                onChange={() => this.props.onSearchTypeChange("locations")}
+                onChange={() => {
+                  this.props.onSearchTypeChange("locations");
+                  this.setState({ query: "" });
+                }}
                 checked={this.props.searchType === "locations"}
               />
               Locations
@@ -99,7 +114,10 @@ class SearchForm extends Component<SearchProps, SearchState> {
                 name="searchType"
                 value="episode"
                 className="search__type"
-                onChange={() => this.props.onSearchTypeChange("episodes")}
+                onChange={() => {
+                  (this.props.onSearchTypeChange("episodes"),
+                    this.setState({ query: "" }));
+                }}
                 checked={this.props.searchType === "episodes"}
               />
               Episodes
