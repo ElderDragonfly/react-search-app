@@ -87,8 +87,8 @@ class SearchForm extends Component<SearchProps, SearchState> {
                 value="character"
                 className="search__type"
                 onChange={() => {
-                  (this.props.onSearchTypeChange("characters"),
-                    this.setState({ query: "" }));
+                  this.props.onSearchTypeChange("characters");
+                  this.setState({ query: "" });
                 }}
                 checked={this.props.searchType === "characters"}
               />
@@ -115,8 +115,8 @@ class SearchForm extends Component<SearchProps, SearchState> {
                 value="episode"
                 className="search__type"
                 onChange={() => {
-                  (this.props.onSearchTypeChange("episodes"),
-                    this.setState({ query: "" }));
+                  this.props.onSearchTypeChange("episodes");
+                  this.setState({ query: "" });
                 }}
                 checked={this.props.searchType === "episodes"}
               />

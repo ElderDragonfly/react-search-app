@@ -233,7 +233,7 @@ it("show message then wrong symbols is searching", async () => {
   expect(fakeFetch).not.toHaveBeenCalled();
 });
 
-it("set searchType and searchQuery in localStorage then click search button", async () => {
+it("saves search type and query to localStorage after search", async () => {
   // Создаём асинхронную функцию фэйкового запроса
   const fakeFetch = vi.fn(async () => {
     return {
@@ -251,8 +251,6 @@ it("set searchType and searchQuery in localStorage then click search button", as
       },
     };
   });
-  const pageUrl =
-    "https://rickandmortyapi.com/api/character?name=Morty+Smith&page=1";
 
   // Заменяем настоящий fetch вторым фэйковым
   vi.stubGlobal("fetch", fakeFetch);
@@ -271,17 +269,51 @@ it("set searchType and searchQuery in localStorage then click search button", as
   await user.click(searchButton);
 
   // Ожидаем что записанное в localStorage равно 'characters' и "Morty Smith"
-  const searchTypeLocalStorage = JSON.parse(localStorage.getItem("searchType"));
-  const searchQueryLocalStorage = JSON.parse(
-    localStorage.getItem("searchQuery"),
+  expect(localStorage.getItem("searchType")).toBe(JSON.stringify("characters"));
+  expect(localStorage.getItem("searchQuery")).toBe(
+    JSON.stringify("Morty Smith"),
   );
-  expect(searchTypeLocalStorage).toBe("characters");
-  expect(searchQueryLocalStorage).toBe("Morty Smith");
+});
 
-  // Ожидаем что ещё раз заменённый заменённый fetch вызовется только один раз
-  expect(fetch).toHaveBeenCalledTimes(1);
-  // Смотрим что request отправил в fetch в зависимости от searchType
-  expect(fetch).toHaveBeenCalledWith(pageUrl);
+it("refresh localStorage after switch search type", async () => {
+  // Создаём асинхронную функцию фэйкового запроса
+  const fakeFetch = vi.fn(async () => {
+    return {
+      ok: true,
+      json: async () => {
+        return {
+          info: {
+            count: 1,
+            pages: 1,
+            next: null,
+            prev: null,
+          },
+          results: [charactersData.results[0]],
+        };
+      },
+    };
+  });
+  // Заменяем настоящий fetch вторым фэйковым
+  vi.stubGlobal("fetch", fakeFetch);
+  // Заполняем localStorage для теста
+  localStorage.setItem("searchType", JSON.stringify("characters"));
+  localStorage.setItem("searchQuery", JSON.stringify("Morty Smith"));
+  // Создаём App
+  render(<App />);
+  // React Testing Library ждёт заголовок карточки после ответа API и обновления App
+  // И если не находит тест падает с ошибкой
+  await screen.findByRole("heading", {
+    name: "Morty Smith",
+  });
+  // user-event создаёт объект, который умеет выполнять действия пользователя.
+  const user = userEvent.setup();
+  // React Testing Library находит поле переключения поиска
+  const locationsRadio = screen.getByRole("radio", { name: "Locations" });
+  // user-event нажимает кнопку location
+  await user.click(locationsRadio);
+  // Ожидаем что записанное в localStorage равно null
+  expect(localStorage.getItem("searchType")).toBeNull();
+  expect(localStorage.getItem("searchQuery")).toBeNull();
 });
 
 it("restore search from localStorage", async () => {

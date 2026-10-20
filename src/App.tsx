@@ -119,6 +119,9 @@ class App extends Component<object, AppState> {
     // Не меняем state если загрузка активна
     if (this.state.loading) return;
     this.setState({ ...defoultState, searchType });
+    // Записываем данные в localStorage
+    localStorage.removeItem("searchType");
+    localStorage.removeItem("searchQuery");
   };
 
   // Управление пагинацией
