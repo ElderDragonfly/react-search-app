@@ -10,6 +10,7 @@ type SearchProps = {
   searchValue: string;
   searchType: SearchType;
   loading: boolean;
+  hasSearched: boolean;
   onSearchTypeChange: (searchType: SearchType) => void;
   onSearch: (searchValue: string) => void;
 };
@@ -69,11 +70,17 @@ class SearchForm extends Component<SearchProps, SearchState> {
           </div>
 
           <div className="search__query-summary">
-            Results for{" "}
-            <span className="search__query-value">
-              "{this.props.searchValue}"
-            </span>{" "}
-            in {this.props.searchType}
+            {this.props.hasSearched ? (
+              <>
+                Results for{" "}
+                <span className="search__query-value">
+                  "{this.props.searchValue}"
+                </span>{" "}
+                in {this.props.searchType}
+              </>
+            ) : (
+              "Search to see results"
+            )}
           </div>
 
           <fieldset

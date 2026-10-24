@@ -14,6 +14,7 @@ import CharactersList from "./components/search-results/characters/CharactersLis
 import LocationsList from "./components/search-results/locations/LocationsList";
 import EpisodesList from "./components/search-results/episodes/EpisodesList";
 import { handleError } from "./api/errors/ApiError";
+import ErrorTestButton from "./components/error-boundary/ErrorTestButton";
 
 type AppState = {
   characters: {
@@ -33,6 +34,7 @@ type AppState = {
   currentPage: number;
   error: ErrorInfo;
   loading: boolean;
+  hasSearched: boolean;
 };
 
 const defoultState: AppState = {
@@ -71,6 +73,7 @@ const defoultState: AppState = {
   currentPage: 1,
   error: null,
   loading: false,
+  hasSearched: false,
 };
 
 class App extends Component<object, AppState> {
@@ -82,6 +85,7 @@ class App extends Component<object, AppState> {
     if (savedType && savedQuery) {
       initialState.searchType = JSON.parse(savedType);
       initialState.searchValue = JSON.parse(savedQuery);
+      initialState.hasSearched = true;
       return initialState;
     }
     return initialState;
@@ -147,6 +151,7 @@ class App extends Component<object, AppState> {
     this.setState({
       loading: true,
       error: null,
+      hasSearched: true,
     });
     // Отсылаем fetch и пытаемся записать ответ в state App`а,
     // если приходит ошибка обрабатываем её
@@ -244,6 +249,7 @@ class App extends Component<object, AppState> {
             searchValue={this.state.searchValue}
             searchType={this.state.searchType}
             loading={this.state.loading}
+            hasSearched={this.state.hasSearched}
             onSearchTypeChange={this.handleSearchType}
             onSearch={this.handleSearch}
           />
@@ -280,6 +286,8 @@ class App extends Component<object, AppState> {
               <p className="error__message">{this.state.error.message}</p>
             </>
           )}
+
+          <ErrorTestButton />
         </main>
       </>
     );

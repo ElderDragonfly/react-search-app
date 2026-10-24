@@ -16,9 +16,10 @@ class ErrorTestButton extends Component<object, State> {
 
     return (
       <button
+        className="error-test-button"
         type="button"
         onClick={() => {
-          // Здесь измени shouldThrow на true через this.setState(...)
+          this.setState({ shouldThrow: true });
         }}
       >
         Test error boundary
