@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "zip": "node -e \"require('node:fs').rmSync('../react-search-app.zip', { force: true })\" && tar -a --exclude=node_modules --exclude=.git --exclude=dist -cf ../react-search-app.zip .",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "react": "^19.2.7",
@@ -25,6 +26,7 @@
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.3",
+    "@vitest/coverage-v8": "^5.0.1",
     "eslint": "^10.6.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.3",
