@@ -134,3 +134,132 @@ it("show modal character card", async () => {
   // Проверяем закрытие по кнопке модалки
   expect(screen.queryByRole("button", { name: "Close modal" })).toBeNull();
 });
+
+it("show error message for episodes in character modal", async () => {
+  const pageUrl =
+    "https://rickandmortyapi.com/api/character?name=Morty+Smith&page=1";
+  const episodeUrl = "https://rickandmortyapi.com/api/episode/1,2";
+  // Создаём асинхронную функцию фэйкового запроса
+  const fakeFetch = vi.fn(async (url: string) => {
+    if (url === pageUrl) {
+      return {
+        ok: true,
+        json: async () => {
+          return charactersData;
+        },
+      };
+    } else if (url === episodeUrl) {
+      return {
+        ok: false,
+        status: 500,
+        statusText: "Internal Server Error",
+      };
+    }
+    // Если вдруг запрос который не предусмотрен
+    throw new Error(`Unexpected request: ${url}`);
+  });
+
+  // Заменяем настоящий fetch фэйковым
+  vi.stubGlobal("fetch", fakeFetch);
+  // Заполняем localStorage для теста
+  localStorage.setItem("searchType", JSON.stringify("characters"));
+  localStorage.setItem("searchQuery", JSON.stringify("Morty Smith"));
+  // Создаём App
+  render(<App />);
+  // React Testing Library ждёт заголовок карточки после ответа API и обновления App
+  // И если не находит тест падает с ошибкой
+  await screen.findByRole("heading", {
+    name: "Morty Smith",
+  });
+
+  // user-event создаёт объект, который умеет выполнять действия пользователя.
+  const user = userEvent.setup();
+
+  // React Testing Library находит карточку персонажа
+  const characterListItem = screen.getByRole("listitem");
+  // Ищем кнопку только внутри characterListItem
+  const characterButton = within(characterListItem).getByRole("button");
+
+  // user-event нажимает на карточку персонажа
+  await user.click(characterButton);
+
+  // React Testing Library ждёт кнопку закрытия модального окна
+  // И если не находит тест падает с ошибкой
+  await screen.findByRole("button", {
+    name: "Close modal",
+  });
+
+  // Дожидаемся результата обработки ошибки.
+  const errorMessage = await screen.findByRole("alert");
+
+  expect(errorMessage.textContent).toContain(
+    "The service encountered a problem. Please try again later.",
+  );
+
+  // Эпизоды не отображаются.
+  expect(screen.queryByText("Pilot")).toBeNull();
+});
+
+it("shows the selected episode from the character modal", async () => {
+  const pageUrl =
+    "https://rickandmortyapi.com/api/character?name=Morty+Smith&page=1";
+  const episodeUrl = "https://rickandmortyapi.com/api/episode/1,2";
+  const selectedEpisodeUrl = "https://rickandmortyapi.com/api/episode/1";
+  // Создаём асинхронную функцию фэйкового запроса
+  const fakeFetch = vi.fn(async (url: string) => {
+    if (url === pageUrl) {
+      return {
+        ok: true,
+        json: async () => {
+          return charactersData;
+        },
+      };
+    } else if (url === episodeUrl) {
+      return {
+        ok: true,
+        json: async () => episodesData,
+      };
+    } else if (url === selectedEpisodeUrl) {
+      return {
+        ok: true,
+        json: async () => episodesData[0],
+      };
+    }
+    // Если вдруг запрос который не предусмотрен
+    throw new Error(`Unexpected request: ${url}`);
+  });
+
+  // Заменяем настоящий fetch фэйковым
+  vi.stubGlobal("fetch", fakeFetch);
+  // Заполняем localStorage для теста
+  localStorage.setItem("searchType", JSON.stringify("characters"));
+  localStorage.setItem("searchQuery", JSON.stringify("Morty Smith"));
+  // Создаём App
+  render(<App />);
+  // React Testing Library ждёт заголовок карточки после ответа API и обновления App
+  // И если не находит тест падает с ошибкой
+  await screen.findByRole("heading", {
+    name: "Morty Smith",
+  });
+
+  // user-event создаёт объект, который умеет выполнять действия пользователя.
+  const user = userEvent.setup();
+
+  // React Testing Library находит карточку персонажа
+  const characterListItem = screen.getByRole("listitem");
+  // Ищем кнопку только внутри characterListItem
+  const characterButton = within(characterListItem).getByRole("button");
+
+  // user-event нажимает на карточку персонажа
+  await user.click(characterButton);
+
+  // React Testing Library находит ссылку на эпизод
+  const episodeLink = await screen.findByText("Pilot");
+  // user-event нажимает на ссылку на эпизод
+  await user.click(episodeLink);
+
+  // ищем заголовок карточки в списке episodes
+  await screen.findByRole("heading", { name: "Pilot" });
+  // Проверяем что модального окна нет
+  expect(screen.queryByRole("button", { name: "Close modal" })).toBeNull();
+});
