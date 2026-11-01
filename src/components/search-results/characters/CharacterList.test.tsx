@@ -70,6 +70,19 @@ const episodesData = [
   },
 ];
 
+const locationData = {
+  id: 20,
+  name: "Earth",
+  type: "Planet",
+  dimension: "Replacement Dimension",
+  residents: [
+    "https://rickandmortyapi.com/api/character/1",
+    "https://rickandmortyapi.com/api/character/2",
+  ],
+  url: "https://rickandmortyapi.com/api/location/20",
+  created: "2017-11-18T19:33:01.173Z",
+};
+
 it("show modal character card", async () => {
   const pageUrl =
     "https://rickandmortyapi.com/api/character?name=Morty+Smith&page=1";
@@ -260,6 +273,70 @@ it("shows the selected episode from the character modal", async () => {
 
   // ищем заголовок карточки в списке episodes
   await screen.findByRole("heading", { name: "Pilot" });
+  // Проверяем что модального окна нет
+  expect(screen.queryByRole("button", { name: "Close modal" })).toBeNull();
+});
+
+it("shows the selected location from the character modal", async () => {
+  const pageUrl =
+    "https://rickandmortyapi.com/api/character?name=Morty+Smith&page=1";
+  const locationUrl = "https://rickandmortyapi.com/api/episode/1,2";
+  const selectedLocationUrl = "https://rickandmortyapi.com/api/location/20";
+  // Создаём асинхронную функцию фэйкового запроса
+  const fakeFetch = vi.fn(async (url: string) => {
+    if (url === pageUrl) {
+      return {
+        ok: true,
+        json: async () => {
+          return charactersData;
+        },
+      };
+    } else if (url === locationUrl) {
+      return {
+        ok: true,
+        json: async () => episodesData,
+      };
+    } else if (url === selectedLocationUrl) {
+      return {
+        ok: true,
+        json: async () => locationData,
+      };
+    }
+    // Если вдруг запрос который не предусмотрен
+    throw new Error(`Unexpected request: ${url}`);
+  });
+
+  // Заменяем настоящий fetch фэйковым
+  vi.stubGlobal("fetch", fakeFetch);
+  // Заполняем localStorage для теста
+  localStorage.setItem("searchType", JSON.stringify("characters"));
+  localStorage.setItem("searchQuery", JSON.stringify("Morty Smith"));
+  // Создаём App
+  render(<App />);
+  // React Testing Library ждёт заголовок карточки после ответа API и обновления App
+  // И если не находит тест падает с ошибкой
+  await screen.findByRole("heading", {
+    name: "Morty Smith",
+  });
+
+  // user-event создаёт объект, который умеет выполнять действия пользователя.
+  const user = userEvent.setup();
+
+  // React Testing Library находит карточку персонажа
+  const characterListItem = screen.getByRole("listitem");
+  // Ищем кнопку только внутри characterListItem
+  const characterButton = within(characterListItem).getByRole("button");
+
+  // user-event нажимает на карточку персонажа
+  await user.click(characterButton);
+
+  // React Testing Library находит ссылку на локацию
+  const locationLink = await screen.findByText("Earth");
+  // user-event нажимает на ссылку на эпизод
+  await user.click(locationLink);
+
+  // ищем заголовок карточки в списке episodes
+  await screen.findByRole("heading", { name: "Earth" });
   // Проверяем что модального окна нет
   expect(screen.queryByRole("button", { name: "Close modal" })).toBeNull();
 });
