@@ -5,6 +5,7 @@ import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, expect, it, vi } from "vitest";
 import App from "../../App";
+import Pagination from "./Pagination";
 
 // После каждого теста удаляем React-компоненты из DOM.
 // Иначе следующий тест увидит элементы предыдущего теста.
@@ -142,4 +143,18 @@ it("shows the second page of character search results", async () => {
   expect(secondFakeFetch).toHaveBeenCalledTimes(1);
   // Смотрим что request отправил в fetch в зависимости от searchType
   expect(secondFakeFetch).toHaveBeenCalledWith(secondPageUrl);
+});
+
+it("disables the previous page button on the first page", () => {
+  const handlePagination = vi.fn();
+
+  render(
+    <Pagination
+      type="characters"
+      currentPage={1}
+      pages={5}
+      loading={false}
+      handlePagination={handlePagination}
+    />,
+  );
 });
