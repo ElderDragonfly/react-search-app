@@ -4,6 +4,7 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, expect, it, vi } from "vitest";
+import "@testing-library/jest-dom/vitest";
 import App from "../../App";
 import Pagination from "./Pagination";
 
@@ -145,7 +146,7 @@ it("shows the second page of character search results", async () => {
   expect(secondFakeFetch).toHaveBeenCalledWith(secondPageUrl);
 });
 
-it("disables the previous page button on the first page", () => {
+it("disables the previous page button on the first page", async () => {
   const handlePagination = vi.fn();
 
   render(
@@ -157,4 +158,100 @@ it("disables the previous page button on the first page", () => {
       handlePagination={handlePagination}
     />,
   );
+
+  // Находим кнопку пагинации "назад"
+  const prevButton = screen.getByRole("button", { name: "<" });
+  // Проверяем что кнопка неактивна
+  expect(prevButton).toBeDisabled();
+  // Проверяем что клик не вызывает обработчик
+  const user = userEvent.setup();
+  await user.click(prevButton);
+
+  expect(handlePagination).not.toHaveBeenCalled();
+});
+
+it("disables the next page button on the last page", async () => {
+  const handlePagination = vi.fn();
+
+  render(
+    <Pagination
+      type="characters"
+      currentPage={5}
+      pages={5}
+      loading={false}
+      handlePagination={handlePagination}
+    />,
+  );
+
+  // Находим кнопку пагинации "вперёд"
+  const nextButton = screen.getByRole("button", { name: ">" });
+  // Проверяем что кнопка неактивна
+  expect(nextButton).toBeDisabled();
+  // Проверяем что клик не вызывает обработчик
+  const user = userEvent.setup();
+  await user.click(nextButton);
+
+  expect(handlePagination).not.toHaveBeenCalled();
+});
+
+it("calls the pagination handler with the previous page", async () => {
+  const handlePagination = vi.fn();
+
+  render(
+    <Pagination
+      type="characters"
+      currentPage={3}
+      pages={5}
+      loading={false}
+      handlePagination={handlePagination}
+    />,
+  );
+  // Находим кнопку пагинации "назад"
+  const prevButton = screen.getByRole("button", { name: "<" });
+  // user-event создаёт объект, который умеет выполнять действия пользователя.
+  const user = userEvent.setup();
+  await user.click(prevButton);
+  // Проверяем что handlePagination вызвали только один раз и при вызове ему передали аргумент 2
+  expect(handlePagination).toHaveBeenCalledExactlyOnceWith(2);
+});
+
+it("calls the pagination handler with the next page", async () => {
+  const handlePagination = vi.fn();
+
+  render(
+    <Pagination
+      type="characters"
+      currentPage={3}
+      pages={5}
+      loading={false}
+      handlePagination={handlePagination}
+    />,
+  );
+  // Находим кнопку пагинации "вперёд"
+  const nextButton = screen.getByRole("button", { name: ">" });
+  // user-event создаёт объект, который умеет выполнять действия пользователя.
+  const user = userEvent.setup();
+  await user.click(nextButton);
+  // Проверяем что handlePagination вызвали только один раз и при вызове ему передали аргумент 4
+  expect(handlePagination).toHaveBeenCalledExactlyOnceWith(4);
+});
+
+it("disables all pagination buttons while loading", () => {
+  const handlePagination = vi.fn();
+
+  render(
+    <Pagination
+      type="characters"
+      currentPage={3}
+      pages={5}
+      loading={true}
+      handlePagination={handlePagination}
+    />,
+  );
+  // Находим все кнопки
+  const buttons = screen.getAllByRole("button");
+  // Проверяем что все они заблокированны
+  buttons.forEach((button) => {
+    expect(button).toBeDisabled();
+  });
 });
