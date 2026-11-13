@@ -1,4 +1,4 @@
-import { Component, type ReactNode } from "react";
+import {useState} from "react";
 import type { Episode, Character, PaginationProps } from "../../types/types";
 import EpisodeCard from "./EpisodeCard";
 import EpisodesModal from "./modal/EpisodesModal";
@@ -11,53 +11,45 @@ type EpisodeListProps = {
   onCharacterSelect: (character: Character) => void;
 };
 
-type EpisodeListState = {
-  selectedEpisode: Episode | null;
-};
-
-class EpisodesList extends Component<EpisodeListProps, EpisodeListState> {
+function EpisodesList(props: EpisodeListProps) {
   // Изначально никакая карточка не выбрана
-  state: EpisodeListState = {
-    selectedEpisode: null,
-  };
+  const [selectedEpisode, setSelectedEpisode] = useState<Episode | null>(null);
   // Callback для выбора карточки по клину на ней
-  handleSelecteEpisodeCard = (episode: Episode) => {
-    this.setState({ selectedEpisode: episode });
+  const handleSelecteEpisodeCard = (episode: Episode) => {
+    setSelectedEpisode(episode);
   };
   // Закрытие модального окна
-  handleModalClose = () => {
-    this.setState({ selectedEpisode: null });
+  const handleModalClose = () => {
+    setSelectedEpisode(null);
   };
 
-  render(): ReactNode {
-    return (
-      <>
-        {/* // При выборе персонажа создаётся модальное окно */}
-        {this.state.selectedEpisode && (
-          <EpisodesModal
-            episode={this.state.selectedEpisode}
-            onCloseModal={this.handleModalClose}
-            onCharacterSelect={this.props.onCharacterSelect}
-          />
-        )}
-        <ul className="search__results--episode episode-list">
-          {this.props.episodesData.map((episode) => {
-            return (
-              <EpisodeCard
-                key={episode.id}
-                loading={this.props.loading}
-                onSelect={this.handleSelecteEpisodeCard}
-                episode={episode}
-              />
-            );
-          })}
-        </ul>
-        <div className="search__results--pagination">
-          <Pagination {...this.props.paginationProps} />
-        </div>
-      </>
-    );
-  }
+  return (
+    <>
+      {/* // При выборе персонажа создаётся модальное окно */}
+      {selectedEpisode && (
+        <EpisodesModal
+          episode={selectedEpisode}
+          onCloseModal={handleModalClose}
+          onCharacterSelect={props.onCharacterSelect}
+        />
+      )}
+      <ul className="search__results--episode episode-list">
+        {props.episodesData.map((episode) => {
+          return (
+            <EpisodeCard
+              key={episode.id}
+              loading={props.loading}
+              onSelect={handleSelecteEpisodeCard}
+              episode={episode}
+            />
+          );
+        })}
+      </ul>
+      <div className="search__results--pagination">
+        <Pagination {...props.paginationProps} />
+      </div>
+    </>
+  );
 }
 
 export default EpisodesList;
