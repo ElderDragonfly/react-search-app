@@ -1,8 +1,7 @@
 import {
-  Component,
-  type ReactNode,
   type ChangeEvent,
   type SubmitEvent,
+  useState,
 } from "react";
 import type { SearchType } from "../types/types";
 
@@ -15,125 +14,104 @@ type SearchProps = {
   onSearch: (searchValue: string) => void;
 };
 
-type SearchState = {
-  query: string;
-};
-
-class SearchForm extends Component<SearchProps, SearchState> {
+function SearchForm(props: SearchProps) {
   // Задаём начальные значения state
-  state: SearchState = {
-    query: "",
-  };
+  const [query, setQuery] = useState("");
 
   // Метод сохраняет текущее значение поля в state
-  handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    this.setState({
-      query: event.currentTarget.value,
-    });
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setQuery(event.currentTarget.value);
   };
 
   // Метод вызывает переданный колбек с отправкой формы
-  handleSubmit = (event: SubmitEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
-    this.props.onSearch(this.state.query);
+    props.onSearch(query);
     // Очищаем поле ввода после отправки формы
-    this.setState({
-      query: "",
-    });
+    setQuery("");
   };
 
-  render(): ReactNode {
-    return (
-      <>
-        <form
-          role="search"
-          className="search__form"
-          onSubmit={this.handleSubmit}
-        >
-          <div className="search__input-wrapper">
-            <input
-              type="search"
-              className="search__input"
-              // Placeholder меняется вместе с изменением state
-              placeholder={`Search ${this.props.searchType}...`}
-              onChange={this.handleChange}
-              // Для очистки после нажатия кнопки отправки
-              value={this.state.query}
-            />
-            <button
-              type="submit"
-              className="search__button"
-              disabled={this.props.loading}
-            >
-              {this.props.loading ? "Loading..." : "Search"}
-            </button>
-          </div>
-
-          <div className="search__query-summary">
-            {this.props.hasSearched ? (
-              <>
-                Results for{" "}
-                <span className="search__query-value">
-                  "{this.props.searchValue}"
-                </span>{" "}
-                in {this.props.searchType}
-              </>
-            ) : (
-              "Search to see results"
-            )}
-          </div>
-
-          <fieldset
-            className="search__type-wrapper"
-            disabled={this.props.loading}
+  return (
+    <>
+      <form role="search" className="search__form" onSubmit={handleSubmit}>
+        <div className="search__input-wrapper">
+          <input
+            type="search"
+            className="search__input"
+            // Placeholder меняется вместе с изменением state
+            placeholder={`Search ${props.searchType}...`}
+            onChange={handleChange}
+            // Для очистки после нажатия кнопки отправки
+            value={query}
+          />
+          <button
+            type="submit"
+            className="search__button"
+            disabled={props.loading}
           >
-            <label className="search__label">
-              <input
-                type="radio"
-                name="searchType"
-                value="character"
-                className="search__type"
-                onChange={() => {
-                  this.props.onSearchTypeChange("characters");
-                  this.setState({ query: "" });
-                }}
-                checked={this.props.searchType === "characters"}
-              />
-              Characters
-            </label>
-            <label className="search__label">
-              <input
-                type="radio"
-                name="searchType"
-                value="location"
-                className="search__type"
-                onChange={() => {
-                  this.props.onSearchTypeChange("locations");
-                  this.setState({ query: "" });
-                }}
-                checked={this.props.searchType === "locations"}
-              />
-              Locations
-            </label>
-            <label className="search__label">
-              <input
-                type="radio"
-                name="searchType"
-                value="episode"
-                className="search__type"
-                onChange={() => {
-                  this.props.onSearchTypeChange("episodes");
-                  this.setState({ query: "" });
-                }}
-                checked={this.props.searchType === "episodes"}
-              />
-              Episodes
-            </label>
-          </fieldset>
-        </form>
-      </>
-    );
-  }
+            {props.loading ? "Loading..." : "Search"}
+          </button>
+        </div>
+
+        <div className="search__query-summary">
+          {props.hasSearched ? (
+            <>
+              Results for{" "}
+              <span className="search__query-value">"{props.searchValue}"</span>{" "}
+              in {props.searchType}
+            </>
+          ) : (
+            "Search to see results"
+          )}
+        </div>
+
+        <fieldset className="search__type-wrapper" disabled={props.loading}>
+          <label className="search__label">
+            <input
+              type="radio"
+              name="searchType"
+              value="character"
+              className="search__type"
+              onChange={() => {
+                props.onSearchTypeChange("characters");
+                setQuery("");
+              }}
+              checked={props.searchType === "characters"}
+            />
+            Characters
+          </label>
+          <label className="search__label">
+            <input
+              type="radio"
+              name="searchType"
+              value="location"
+              className="search__type"
+              onChange={() => {
+                props.onSearchTypeChange("locations");
+                setQuery("");
+              }}
+              checked={props.searchType === "locations"}
+            />
+            Locations
+          </label>
+          <label className="search__label">
+            <input
+              type="radio"
+              name="searchType"
+              value="episode"
+              className="search__type"
+              onChange={() => {
+                props.onSearchTypeChange("episodes");
+                setQuery("");
+              }}
+              checked={props.searchType === "episodes"}
+            />
+            Episodes
+          </label>
+        </fieldset>
+      </form>
+    </>
+  );
 }
 
 export default SearchForm;
